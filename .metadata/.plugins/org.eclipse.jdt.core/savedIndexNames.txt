@@ -1,5 +1,4 @@
 INDEX VERSION 1.130+D:\Jonas\Git\Slateroo\.metadata\.plugins\org.eclipse.jdt.core
-3617210056.index
 2253722314.index
 767823564.index
 1315528354.index
@@ -13,7 +12,6 @@ INDEX VERSION 1.130+D:\Jonas\Git\Slateroo\.metadata\.plugins\org.eclipse.jdt.cor
 1461017335.index
 3666666183.index
 813359287.index
-1322212902.index
 2872559144.index
 2262474211.index
 1948470277.index

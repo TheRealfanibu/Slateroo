@@ -34,7 +34,7 @@ public class EnvironmentInfo {
 	
 	private List<Double> calcInputForTimeEffectItems(Snake snake) {
 		List<Double> timeEffectInputs = new ArrayList<>();
-		List<Class<?>> timeEffectClasses = ObjectSequence.getTimeEffectClasses();
+		List<Class<?>> timeEffectClasses = ObjectSequence.getClassesMatchingPredicate(clazz -> ITimeEffectItem.class.isAssignableFrom(clazz));
 		for(Class<?> timeEffectClass : timeEffectClasses) {
 			List<TimeEffect> timeEffects = snake.getItemClassTimeEffects(timeEffectClass);
 			if(timeEffects.isEmpty()) {

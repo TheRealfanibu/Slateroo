@@ -16,11 +16,6 @@ import render.GamePanel;
 import utilities.StopWatch;
 import utilities.Utils;
 
-/**
- * The class which contains the main method for the program.
- * There will be one instance of this class which introduces all main events happening in the application
- * @author Jonas
- */
 public class Main {
 	public static final int FPS = 140;
 	private static final int SLEEP_TIME = (int) Math.round(1000d / FPS);
@@ -36,20 +31,7 @@ public class Main {
 	private EnvironmentInfo envInfo;
 	private ObjectDetector objectDetector;
 	
-	/**
-	 * The constructor which has to be called first in the program.
-	 * It creates the application
-	 */
 	public Main() {
-		init();
-		gameLoop();
-	}
-	
-	/**
-	 * Creates instances of the classes, which only have to exist once.
-	 * It also handles the access between each other
-	 */
-	private void init() {
 		arena = new Arena();
 		keyListener = new KeyboardSteering();
 		itemManager = new ItemManager();
@@ -59,11 +41,10 @@ public class Main {
 		gamePanel = new GamePanel(snakeManager, itemManager, objectDetector, arena);
 		frame = new Frame(gamePanel);
 		frame.addKeyListener(keyListener);
+		
+		gameLoop();
 	}
 	
-	/**
-	 * This method contains a loop running all the time during the game and controlling the actions which happen in the game
-	 */
 	private void gameLoop() {
 		FPSCounter fps = new FPSCounter("main", 5);
 		while(snakeManager.isGameRunning()) {
@@ -81,10 +62,6 @@ public class Main {
 		System.exit(0);
 	}
 	
-	/**
-	 * The method which the JVM calls when starting the program
-	 * @param args - Console inputs (not needed here)
-	 */
 	public static void main(String[] args) {
 		List<String> trainData = null;
 		List<String> testData = null;

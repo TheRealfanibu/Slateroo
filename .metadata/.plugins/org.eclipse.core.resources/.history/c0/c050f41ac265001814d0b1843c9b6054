@@ -11,11 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unchecked")
 public abstract class Utils {
-	/**
-	 * 
-	 * @param toCopy The instance to copy
-	 * @return A absolutly independent (without the same references) deep copy of toCopy
-	 */
+	public static Compiler compiler = new Compiler();
+	
 	public static <T> T deepCopy (T toCopy) {
 		try {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
