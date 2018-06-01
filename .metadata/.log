@@ -1,0 +1,45 @@
+!SESSION 2018-06-01 15:58:46.037 -----------------------------------------------
+eclipse.buildId=4.6.3.M20170301-0400
+java.version=1.8.0
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=de_DE
+Framework arguments:  -product org.eclipse.epp.package.java.product -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product org.eclipse.epp.package.java.product -data D:\Jonas\Git\Slateroo -product org.eclipse.epp.package.java.product
+
+!ENTRY org.eclipse.egit.ui 2 0 2018-06-01 15:59:01.613
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Jonas'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.recommenders.types.rcp 1 4 2018-06-01 16:31:22.283
+!MESSAGE Full project indexing required:
+  [+] D:\Java\jdk1.8.0\jre\lib\charsets.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\access-bridge-64.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\cldrdata.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\dnsns.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\jaccess.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\jfxrt.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\localedata.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\nashorn.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\sunec.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\sunjce_provider.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\sunmscapi.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\sunpkcs11.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\ext\zipfs.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\jce.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\jfr.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\jsse.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\resources.jar
+  [+] D:\Java\jdk1.8.0\jre\lib\rt.jar
+
+!STACK 0
+org.eclipse.recommenders.utils.Logs$LogTraceException
+	at org.eclipse.recommenders.utils.Logs$LogTraceException.newTrace(Logs.java:381)
+	at org.eclipse.recommenders.utils.Logs.log(Logs.java:134)
+	at org.eclipse.recommenders.internal.types.rcp.ProjectTypesIndex.needsRebuild(ProjectTypesIndex.java:169)
+	at org.eclipse.recommenders.internal.types.rcp.ProjectTypesIndex.startUp(ProjectTypesIndex.java:122)
+	at com.google.common.util.concurrent.AbstractIdleService$2$1.run(AbstractIdleService.java:54)
+	at com.google.common.util.concurrent.Callables$3.run(Callables.java:93)
+	at java.lang.Thread.run(Thread.java:744)

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename local variable &apos;tileBefore&apos; in &apos;logic.Snake.calcTileMovement(...)&apos; to &apos;tileAhead&apos;&#x0D;&#x0A;- Original project: &apos;Slateroo&apos;&#x0D;&#x0A;- Original element: &apos;logic.Snake.calcTileMovement(SnakeTile, SnakeTile).tileBefore&apos;&#x0D;&#x0A;- Renamed element: &apos;tileBefore&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename local variable &apos;tileBefore&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;logic{Snake.java[Snake~calcTileMovement~QSnakeTile;~QSnakeTile;@tileBefore!7419!7438!7429!7438!QSnakeTile;!0!true" name="tileAhead" references="true" stamp="1527869374633" version="1.0"/>
+</session>
