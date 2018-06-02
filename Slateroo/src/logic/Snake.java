@@ -28,14 +28,14 @@ import items.superClasses.Item;
 import utilities.Utils;
 
 /**
- * Represents a snake consisting of multiple {@link SnakeTile}s
+ * This class represents a snake consisting of multiple {@link SnakeTile}s
  * @author Jonas
  *
  */
 
 public class Snake {
 	/**
-	 * The initial amount of {@code SnakeTile} objects every snakes has at the beginning
+	 * The initial amount of {@code SnakeTile} objects every snakes has at the beginning of the game
 	 */
 	private static final int INIT_FOLLOWING_TILES = 20;
 	/**
@@ -69,11 +69,11 @@ public class Snake {
 	/**
 	 * Responsible for choosing the direction of the move each frame
 	 */
-	private Steering steerManager; // Responsible for choosing the direction the move each frame
+	private Steering steerManager;
 	/**
 	 * Indicates whether this snake is steered by an AI
 	 */
-	private final boolean steeredByAI; // indicates whether this snake is steered by an AI
+	private final boolean steeredByAI;
 	/**
 	 * The List of {@link SnakeTile} this snakes consists of
 	 */
@@ -141,33 +141,6 @@ public class Snake {
 		chooseColor();
 		initTiles();
 		initStarvation();
-	}
-	
-	/**
-	 * Adds a TimeEffect instance to {@code timeEffects}
-	 * @param effect The TimeEffect to add
-	 */
-	public void addTimeEffect(TimeEffect effect) {
-		if(steeredByAI)
-			timeEffects.add(effect);
-	}
-	
-	/**
-	 * Removes a TimeEffect instance from {@code timeEffects}
-	 * @param effect The TimeEffect to remove
-	 */
-	public void removeTimeEffect(TimeEffect effect) {
-		if(steeredByAI)
-			timeEffects.remove(effect);
-	}
-	
-	/**
-	 * Returns all TimeEffects in {@code timeEffects} which are from the specified {@link Item} class
-	 * @param itemClass the specified Item class
-	 * @return A List of the Time Effects which are from the specified Item class
-	 */
-	public List<TimeEffect> getItemClassTimeEffects(Class<?> itemClass) {
-		return timeEffects.stream().filter(timeEffect -> timeEffect.getItemClass() == itemClass).collect(Collectors.toList());
 	}
 	
 	/**
@@ -337,7 +310,7 @@ public class Snake {
 			g2.setComposite(alpha);
 		}
 		tilesLock.readLock().lock();
-		for(int i = tiles.size() - 1; i >= 0; i--) { // start with the last tile, to get a nicer 3D Effect
+		for(int i = tiles.size() - 1; i >= 0; i--) { // start with the last tile, to draw the head over every other tile -> nice 3D Effect
 			tiles.get(i).render(g2);
 		}
 		tilesLock.readLock().unlock();
@@ -475,16 +448,16 @@ public class Snake {
 	 * This method is executed when collecting a {@link SpeedItem} or a {@link SlowItem} or if the effect is reseted
 	 * @param factor The factor by which the speed of the snake gets multiplied
 	 */
-	public void changeSpeed(double factor) {
-		head.changeSpeed(factor);
+	public void changeSpeed(double speedAmount) {
+		head.changeSpeed(speedAmount);
 	}
 	/**
 	 * Changes the speed of rotatation of this snake.
 	 * This method is executed when collecting a {@link SlowSteerItem} or if the effect is reseted
-	 * @param factor The factor by which the speed of the snake gets multiplied
+	 * @param angleAmount The factor by which the speed of the snake gets multiplied
 	 */
-	public void changeSteerAngle(double factor) {
-		head.changeSteerAngle(factor);
+	public void changeSteerAngle(double angleAmount) {
+		head.changeSteerAngle(angleAmount);
 	}
 	/**
 	 * Starts or Stops the Zick Zack Movement Depending on the specified mode
@@ -493,6 +466,32 @@ public class Snake {
 	 */
 	public void setZickZackMode(boolean mode) {
 		head.setZickZackMode(mode);
+	}
+	
+	/**
+	 * Adds a TimeEffect instance to {@code timeEffects}
+	 * @param effect The TimeEffect to add
+	 */
+	public void addTimeEffect(TimeEffect effect) {
+		if(steeredByAI)
+			timeEffects.add(effect);
+	}
+	/**
+	 * Removes a TimeEffect instance from {@code timeEffects}
+	 * @param effect The TimeEffect to remove
+	 */
+	public void removeTimeEffect(TimeEffect effect) {
+		if(steeredByAI)
+			timeEffects.remove(effect);
+	}
+	
+	/**
+	 * Returns all TimeEffects in {@code timeEffects} which are from the specified {@link Item} class
+	 * @param itemClass the specified Item class
+	 * @return A List of the Time Effects which are from the specified Item class
+	 */
+	public List<TimeEffect> getItemClassTimeEffects(Class<?> itemClass) {
+		return timeEffects.stream().filter(timeEffect -> timeEffect.getItemClass() == itemClass).collect(Collectors.toList());
 	}
 	
 	public HeadTile getHead() {

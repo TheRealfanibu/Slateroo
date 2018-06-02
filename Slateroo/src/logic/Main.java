@@ -71,7 +71,7 @@ public class Main {
 			snakeManager.takeActionForEachSnake();
 			snakeManager.removeObsoleteSnakes();
 			snakeManager.checkSnakeCrashes();
-			snakeManager.checkItemIntersections();
+			snakeManager.checkSnakeItemIntersections();
 			itemManager.removeActivatedItems();
 			if(!snakeManager.getSnakes().isEmpty())
 				envInfo.calcAIInputs(snakeManager.getSnakes().get(0));
@@ -86,7 +86,7 @@ public class Main {
 	 * @param args - Console inputs (not needed here)
 	 */
 	public static void main(String[] args) {
-		List<String> trainData = null;
+		/*List<String> trainData = null;
 		List<String> testData = null;
 		try {
 			trainData = Files.readAllLines(Paths.get("res/ai/mnist_train.csv"));
@@ -109,8 +109,8 @@ public class Main {
 		
 		int episodes = 3;
 		train(network, trainFeatures, trainLabels, episodes);
-		test(network, testFeatures, testLabels);
-		//new Main();
+		test(network, testFeatures, testLabels);*/
+		new Main();
 	}
 	
 	public static void train(NeuralNetwork network, double[][] trainFeatures, double[][] trainLabels, int episodes) {
