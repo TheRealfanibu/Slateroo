@@ -18,11 +18,11 @@ public class SpeedItem extends MultiplePlayerTimeEffectItem implements IStackabl
 
 	@Override
 	protected void effect(Snake snake) {
-		snake.changeVelocity(SPEED_CHANGE);
+		snake.changeSpeed(SPEED_CHANGE);
 	}
 	
 	@Override
 	protected void resetEffect(Snake snake) {
-		snake.changeVelocity(-SPEED_CHANGE);
+		snake.changeSpeed(-SPEED_CHANGE);
 	}
 }

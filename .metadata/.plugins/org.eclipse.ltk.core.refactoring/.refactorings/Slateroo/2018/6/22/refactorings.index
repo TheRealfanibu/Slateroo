@@ -8,3 +8,8 @@
 1527960374825	Rename field 'D_ANGLE'
 1527962631307	Rename local variable 'amount'
 1527962646854	Rename local variable 'factor'
+1528017929187	Rename field 'STEER_ANGLE_SPEED_CHANGE'
+1528018132003	Rename method 'changeSpeed'
+1528018144396	Rename local variable 'speedAmount'
+1528018158109	Rename method 'changeSpeed'
+1528018165258	Rename local variable 'speedAmount'

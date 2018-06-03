@@ -18,10 +18,10 @@ public class SlowItem extends MultiplePlayerTimeEffectItem implements IStackable
 
 	@Override
 	protected void effect(Snake snake) {
-		snake.changeSpeed(SPEED_CHANGE);
+		snake.changeVelocity(SPEED_CHANGE);
 	}
 	@Override
 	protected void resetEffect(Snake snake) {
-		snake.changeSpeed(-SPEED_CHANGE);
+		snake.changeVelocity(-SPEED_CHANGE);
 	}
 }

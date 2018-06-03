@@ -10,7 +10,7 @@ public class SlowSteerItem extends MultiplePlayerTimeEffectItem implements IStac
 	public static final double MAX_SPAWN_DIFF = 15;
 	
 	private static final double EFFECT_TIME = 5;
-	private static final double STEER_ANGLE_SPEED_CHANGE = -100;
+	private static final double STEER_ANGLE_CHANGE = -100;
 
 	public SlowSteerItem(int x, int y, ItemEffectMode mode) {
 		super(x, y, mode, "bananenschale", EFFECT_TIME);
@@ -18,10 +18,10 @@ public class SlowSteerItem extends MultiplePlayerTimeEffectItem implements IStac
 
 	@Override
 	protected void effect(Snake snake) {
-		snake.changeSteerAngle(STEER_ANGLE_SPEED_CHANGE);
+		snake.changeSteerAngle(STEER_ANGLE_CHANGE);
 	}	
 	@Override
 	protected void resetEffect(Snake snake) {
-		snake.changeSteerAngle(-STEER_ANGLE_SPEED_CHANGE);
+		snake.changeSteerAngle(-STEER_ANGLE_CHANGE);
 	}
 }

@@ -448,8 +448,8 @@ public class Snake {
 	 * This method is executed when collecting a {@link SpeedItem} or a {@link SlowItem} or if the effect is reseted
 	 * @param factor The factor by which the speed of the snake gets multiplied
 	 */
-	public void changeVelocity(double velocityAmount) {
-		head.changeVelocity(velocityAmount);
+	public void changeSpeed(double speedAmount) {
+		head.changeVelocity(speedAmount);
 	}
 	/**
 	 * Changes the speed of rotatation of this snake.

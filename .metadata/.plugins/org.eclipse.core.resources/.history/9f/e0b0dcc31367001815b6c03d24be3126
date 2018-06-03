@@ -32,7 +32,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 	private static final double CIRCLE_RADIUS = VELOCITY * 180 / (Math.PI * ROTATION_ANGLE);
 	/**
 	 * When the snake moves to the right or left, the head rotates in a circle. This variable is storing the angle of rotation in degrees.
-	 * Starting with "0" degrees at the top of the circle and increasing up to "360" degrees clockwise. This angle is representing the position
+	 * Starting with "0" degrees at the top of the circle and increasing up to "360" degrees clockwise. This angle is storing the position
 	 * on the circle when moving to the right. For example if the snake moves straight to the right, this angle will be "0" degrees.
 	 * This is because if the snake moves to the right, the head will rotate clockwise on the circle from this "0" degrees position.
 	 * If the snake moves left, then "180" degrees will
@@ -107,7 +107,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 			if(dir.equals(Direction.LEFT)) {
 				double correctedAngle = rotationAngle + 180; 
 				
-				radAngle = Math.toRadians(correctedAngle); // sin() and cos() functions need the angles in radians
+				radAngle = Math.toRadians(correctedAngle);
 				radNewAngle = Math.toRadians(correctedAngle - dRotationAngle);
 				
 				rotationAngle -= dRotationAngle;		
@@ -118,7 +118,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 				
 				rotationAngle += dRotationAngle;
 			}
-			double old_x = Math.sin(radAngle);   // not yet scaled to circleRadius
+			double old_x = Math.sin(radAngle);   // not scaled to circleRadius
 			double old_y = Math.cos(radAngle);
 			double new_x = Math.sin(radNewAngle);
 			double new_y = Math.cos(radNewAngle);
@@ -126,13 +126,13 @@ public class HeadTile extends SnakeTile implements Serializable{
 			dx = (new_x - old_x) * circleRadius; // scaled to circleRadius
 			dy = (old_y - new_y) * circleRadius; // old - new because of the coordinate system
 			
-			moveAngle = rotationAngle + 90; //This is generally only true for right movement, because it should be -90 for
-											// left movement, but since the rotationAngle for left movement is rotationAngle + 180
-											// it always results in rotationAngle + 90
+			moveAngle = rotationAngle + 90; // This is generally only true for right movement, because it should be -90 for
+											// left movement, but since the rotationAngle for left movement is rotationAngle+180 this always true
 		}
 		else if(previousDir.equals(Direction.LEFT) || previousDir.equals(Direction.RIGHT) || velocityChanged) // Direction.MIDDLE || Direction.LEFT_RIGHT
 				calcStraightMovement();
-		super.move(dx, dy);
+		x += dx;
+		y += dy;
 		previousDir = dir;
 	}
 	
@@ -141,44 +141,28 @@ public class HeadTile extends SnakeTile implements Serializable{
 	 */
 	private void calcStraightMovement() {
 		dx = Math.sin(Math.toRadians(moveAngle)) * dVelocity;
-		dy = - Math.cos(Math.toRadians(moveAngle)) * dVelocity; // minus because of the coordinate system
+		dy = - Math.cos(Math.toRadians(moveAngle)) * dVelocity; // minus because of coordinate system
 		velocityChanged = false;
 	}
 	
-	/**
-	 * Changes the velocity of the head by the specified amount.
-	 * @param velocityAmount The amount by which the velocity changes in pixels per second. A value > 0 increases the velocity
-	 * and a value < 0 decreases the velocity
-	 */
-	public void changeVelocity(double velocityAmount) {
-		double changeFactor = (velocityAmount / (dVelocity * Main.FPS)) + 1;
+	public void changeSpeed(double speedAmount) {
+		double changeFactor = (speedAmount / (dVelocity * Main.FPS)) + 1;
 		dVelocity *= changeFactor;
 		dRotationAngle *= changeFactor;
 		velocityChanged = true;
 	}
 	
-	/**
-	 * Changes the angle, the head is rotating on the circle per second by the specified amount. 
-	 * @param angleAmount The specified amount of change. A value > 0 increases the angle and thus the head rotates faster on the circle with the
-	 * same velocity in general, which means that the radius of the circle becomes smaller.
-	 * A value < 0 decreases the angle and thus the head rotates slower on the circle with the same velocity in general, which means that the
-	 * radius of the circle becomes larger
-	 */
+
 	public void changeSteerAngle(double angleAmount) {
 		double changeFactor = (angleAmount / (dRotationAngle * Main.FPS)) + 1;
 		dRotationAngle *= changeFactor;
 		circleRadius /= changeFactor;
 	}
 
-	/**
-	 * Initializes every angle, velocity and the circle radius depending on whether the snakes start position is on the right or on
-	 * the left of the arena.
-	 * @param startPosOnTheRight If true, the snake starts on the right of the arena and its movement is to the left.
-	 * If false, the snake starts on the left of the arena and its movement is to the right.
-	 */
+	
 	private void init(boolean startPosOnTheRight) {
 		this.rotationAngle = startPosOnTheRight ? 180 : 0;
-		moveAngle = rotationAngle + 90; // go to line 129 for explanation
+		moveAngle = rotationAngle + 90;
 		
 		dVelocity = D_VELOCITY;
 		dRotationAngle = D_ROTATION_ANGLE;
@@ -186,27 +170,22 @@ public class HeadTile extends SnakeTile implements Serializable{
 		
 		calcStraightMovement();
 	}
-	/**
-	 * @return The x-position plus the radius
-	 */
+	
+	public void render(Graphics g) {
+		super.render(g);
+		//eyes.render(g, angle, x, y);
+	}
+	
+	
 	public int getXPlusRadius() {
 		return (int) getX() + RADIUS;
 	}
-	/**
-	 * @return The x-position minus the radius
-	 */
 	public int getXMinusRadius() {
 		return (int) getX() - RADIUS;
 	}
-	/**
-	 * @return The <-position plus the radius
-	 */
 	public int getYPlusRadius() {
 		return (int) getY() + RADIUS;
 	}
-	/**
-	 * @return The y-position minus the radius
-	 */
 	public int getYMinusRadius() {
 		return (int) getY() - RADIUS;
 	}
