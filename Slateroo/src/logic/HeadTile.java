@@ -9,6 +9,11 @@ import items.SlowItem;
 import items.SpeedItem;
 import items.ZickZackMovementItem;
 
+/**
+ * This class is a subclass of {@link SnakeTile} and represents the head of the snake.
+ * The head of the snake is the instance which moves depending on the user or AI input.
+ * @author Jonas
+ */
 public class HeadTile extends SnakeTile implements Serializable{
 	/**
 	 * The default velocity the head of a snake moves measured in pixels per second
@@ -187,25 +192,25 @@ public class HeadTile extends SnakeTile implements Serializable{
 		calcStraightMovement();
 	}
 	/**
-	 * @return The x-position plus the radius
+	 * @return The x-position plus the radius of the {@link SnakeTile}
 	 */
 	public int getXPlusRadius() {
 		return (int) getX() + RADIUS;
 	}
 	/**
-	 * @return The x-position minus the radius
+	 * @return The x-position minus the radius of the {@link SnakeTile}
 	 */
 	public int getXMinusRadius() {
 		return (int) getX() - RADIUS;
 	}
 	/**
-	 * @return The <-position plus the radius
+	 * @return The <-position plus the radius of the {@link SnakeTile}
 	 */
 	public int getYPlusRadius() {
 		return (int) getY() + RADIUS;
 	}
 	/**
-	 * @return The y-position minus the radius
+	 * @return The y-position minus the radius of the {@link SnakeTile}
 	 */
 	public int getYMinusRadius() {
 		return (int) getY() - RADIUS;

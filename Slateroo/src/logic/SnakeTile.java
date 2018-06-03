@@ -44,7 +44,7 @@ public class SnakeTile implements GameObject, Serializable{
 		this.y = y;
 	}
 	/**
-	 * Moves this SnakeTile by the specified x and y mouznt
+	 * Moves this SnakeTile by the specified x and y amount
 	 * @param dx The amount by which this tile should be moved in x direction, a value > 0 means moving to the right.
 	 * @param dy The amount by which this tile should be moved in y direction, a value > 0 means moving down.
 	 */

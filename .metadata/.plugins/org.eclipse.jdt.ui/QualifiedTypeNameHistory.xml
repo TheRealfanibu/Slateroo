@@ -3,18 +3,22 @@
 <fullyQualifiedTypeName name="items.markerInterfaces.ITimeEffectItem"/>
 <fullyQualifiedTypeName name="logic.Arena"/>
 <fullyQualifiedTypeName name="io.Steering"/>
-<fullyQualifiedTypeName name="items.superClasses.Item"/>
 <fullyQualifiedTypeName name="java.lang.Class"/>
 <fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="items.manage.TimeEffect"/>
 <fullyQualifiedTypeName name="items.HeadToTailItem"/>
 <fullyQualifiedTypeName name="items.ReverseSteeringItem"/>
 <fullyQualifiedTypeName name="items.InvulnerableItem"/>
-<fullyQualifiedTypeName name="items.SlowSteerItem"/>
-<fullyQualifiedTypeName name="items.TeleportBorderItem"/>
-<fullyQualifiedTypeName name="logic.SnakeTile"/>
 <fullyQualifiedTypeName name="logic.Snake"/>
+<fullyQualifiedTypeName name="items.ZickZackMovementItem"/>
+<fullyQualifiedTypeName name="items.superClasses.Item"/>
+<fullyQualifiedTypeName name="ai.EnvironmentInfo"/>
+<fullyQualifiedTypeName name="logic.SnakeTile"/>
+<fullyQualifiedTypeName name="items.TeleportBorderItem"/>
+<fullyQualifiedTypeName name="items.superClasses.MultiplePlayerTimeEffectItem"/>
+<fullyQualifiedTypeName name="items.superClasses.TimeEffectItem"/>
+<fullyQualifiedTypeName name="items.superClasses.MultiplePlayerEffectItem"/>
 <fullyQualifiedTypeName name="items.SpeedItem"/>
 <fullyQualifiedTypeName name="items.SlowItem"/>
-<fullyQualifiedTypeName name="items.ZickZackMovementItem"/>
+<fullyQualifiedTypeName name="items.SlowSteerItem"/>
 </qualifiedTypeNameHistroy>

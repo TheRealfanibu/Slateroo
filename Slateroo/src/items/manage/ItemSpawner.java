@@ -124,7 +124,7 @@ public class ItemSpawner {
 	private Point generateCoordinates() {
 		int x = rand.nextInt(SPAWN_ROOM_X);
 		int y = rand.nextInt(SPAWN_ROOM_Y);
-		return new Point((int) Item.toMiddlePos(x), (int) Item.toMiddlePos(y));
+		return new Point(x + Item.LENGTH_HALF, y + Item.LENGTH_HALF);
 	}
 	
 	public static void setItemManager(ItemManager manager) {

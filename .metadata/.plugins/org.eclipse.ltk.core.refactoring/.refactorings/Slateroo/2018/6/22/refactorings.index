@@ -13,3 +13,6 @@
 1528018144396	Rename local variable 'speedAmount'
 1528018158109	Rename method 'changeSpeed'
 1528018165258	Rename local variable 'speedAmount'
+1528028010998	Rename method 'isSnakeColliding'
+1528034342901	Rename local variable 'task'
+1528034351190	Rename local variable 'task'

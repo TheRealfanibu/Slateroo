@@ -21,41 +21,50 @@ import logic.SnakeManager;
 import mathUtils.MathUtils;
 
 public class GamePanel extends JPanel{
-	private static final Color BG = Color.CYAN.darker().darker();
-	
+	private static final Color BG = Color.GREEN.darker();
+	/**
+	 * Reference to the snake manager object
+	 */
 	private SnakeManager snakeManager;
+	/**
+	 * Reference to the item manager object
+	 */
 	private ItemManager itemManager;
-	private ObjectDetector objectDetector;
+	/**
+	 * Reference to the arena
+	 */
 	private Arena arena;
-	
+	/**
+	 * An FPS counter for rendering
+	 */
 	private FPSCounter fps = new FPSCounter("render", 5);
 	
-	public GamePanel(SnakeManager snakeManager, ItemManager itemManager, ObjectDetector objectDetector, Arena arena) {
+	/**
+	 * Constructs this objects and assigns the references to the global variables
+	 * @param snakeManager The reference of the snake manager object
+	 * @param itemManager The referemce of the item manager object
+	 * @param arena The reference of the arena object
+	 */
+	public GamePanel(SnakeManager snakeManager, ItemManager itemManager, Arena arena) {
 		this.snakeManager = snakeManager;
 		this.itemManager = itemManager;
-		this.objectDetector = objectDetector;
 		this.arena = arena;
 		
-		setBackground(Color.BLACK);
-		setPreferredSize(new Dimension(Frame.WIDTH, Frame.HEIGHT));
+		setBackground(BG);
+		setPreferredSize(new Dimension(Frame.RIGHT_FRAME_BORDER_X, Frame.LOWER_FRAME_BORDER_Y));
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
 		fps.count();
-		
-		g.setColor(BG);
-		g.fillRect(0, 0, Frame.WIDTH, Frame.HEIGHT);
 		
 		arena.renderArena(g);
 		itemManager.render(g);
 		snakeManager.render(g);
 		arena.renderBorder(g);
-		//drawObjectDetection(g);
 	}
 	
-	private void drawObjectDetection(Graphics g) {
+	/*private void drawObjectDetection(Graphics g) {
 		snakeManager.getSnakes().forEach(snake -> {
 			HeadTile head = snake.getHead();
 			List<Point> points = objectDetector.calcDirectionLines(snake);
@@ -79,5 +88,5 @@ public class GamePanel extends JPanel{
 			});
 			g2.setStroke(new BasicStroke(1));
 		});
-	}
+	}*/
 }

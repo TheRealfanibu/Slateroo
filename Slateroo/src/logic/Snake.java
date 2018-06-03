@@ -206,7 +206,7 @@ public class Snake {
 		}
 		tilesLock.readLock().unlock();
 		
-		if(!invulnerable && !arena.isInTeleportMode() && arena.isSnakeColliding(head))
+		if(!invulnerable && !arena.isInTeleportMode() && arena.isSnakeCollidingWithBorder(head))
 			collided = true;
 			
 	}

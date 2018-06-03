@@ -20,7 +20,7 @@ import items.superClasses.Item;
 
 /**
  * This class specifies the classes existing in the game, which is needed for the AI.
- * It also specifies the order of information concerning the objects of those classes in game, given to the AI
+ * It also specifies the order of information concerning the objects of those classes in the game, given to the AI
  * @author Jonas
  *
  */
@@ -46,13 +46,13 @@ public class ObjectSequence {
 	private static final List<Class<?>> TIME_EFFECT_CLASSES = getClassesMatchingPredicate(clazz -> ITimeEffectItem.class.isAssignableFrom(clazz));
 	
 	/**
-	 * Private constructor to prevent that an instanciation of this class
+	 * Private constructor to prevent an instanciation of this class
 	 */
 	private ObjectSequence(){}
 	
 	/**
 	 * 
-	 * @param predicate the filter for the game classes
+	 * @param predicate The filter for the game classes
 	 * @return All game classes matching this predicate
 	 */
 	private static List<Class<?>> getClassesMatchingPredicate(Predicate<Class<?>> predicate) {

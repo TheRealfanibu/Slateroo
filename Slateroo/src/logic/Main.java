@@ -56,7 +56,7 @@ public class Main {
 		snakeManager = new SnakeManager(keyListener, itemManager);
 		objectDetector = new ObjectDetector(snakeManager, itemManager);
 		envInfo = new EnvironmentInfo(objectDetector);
-		gamePanel = new GamePanel(snakeManager, itemManager, objectDetector, arena);
+		gamePanel = new GamePanel(snakeManager, itemManager, arena);
 		frame = new Frame(gamePanel);
 		frame.addKeyListener(keyListener);
 	}
