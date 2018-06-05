@@ -452,7 +452,7 @@ public class Snake {
 		head.changeVelocity(velocityAmount);
 	}
 	/**
-	 * Changes the speed of rotatation of this snake.
+	 * Changes the speed of rotation of this snake.
 	 * This method is executed when collecting a {@link SlowSteerItem} or if the effect is reseted
 	 * @param angleAmount The factor by which the speed of the snake gets multiplied
 	 */

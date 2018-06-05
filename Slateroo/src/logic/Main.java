@@ -73,8 +73,9 @@ public class Main {
 			snakeManager.checkSnakeCrashes();
 			snakeManager.checkSnakeItemIntersections();
 			itemManager.removeActivatedItems();
-			if(!snakeManager.getSnakes().isEmpty())
-				envInfo.calcAIInputs(snakeManager.getSnakes().get(0));
+			if(!snakeManager.getSnakes().isEmpty()) {
+				double[] sdf = envInfo.calcAIInputs(snakeManager.getSnakes().get(0));
+			}
 			gamePanel.repaint();
 			Utils.sleep(SLEEP_TIME);
 		}
