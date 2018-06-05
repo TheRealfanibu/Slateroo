@@ -11,14 +11,14 @@
 <fullyQualifiedTypeName name="items.InvulnerableItem"/>
 <fullyQualifiedTypeName name="logic.Snake"/>
 <fullyQualifiedTypeName name="items.ZickZackMovementItem"/>
-<fullyQualifiedTypeName name="items.superClasses.Item"/>
 <fullyQualifiedTypeName name="ai.EnvironmentInfo"/>
 <fullyQualifiedTypeName name="logic.SnakeTile"/>
 <fullyQualifiedTypeName name="items.TeleportBorderItem"/>
 <fullyQualifiedTypeName name="items.superClasses.MultiplePlayerTimeEffectItem"/>
 <fullyQualifiedTypeName name="items.superClasses.TimeEffectItem"/>
-<fullyQualifiedTypeName name="items.superClasses.MultiplePlayerEffectItem"/>
 <fullyQualifiedTypeName name="items.SpeedItem"/>
 <fullyQualifiedTypeName name="items.SlowItem"/>
 <fullyQualifiedTypeName name="items.SlowSteerItem"/>
+<fullyQualifiedTypeName name="items.superClasses.Item"/>
+<fullyQualifiedTypeName name="items.superClasses.MultiplePlayerEffectItem"/>
 </qualifiedTypeNameHistroy>
