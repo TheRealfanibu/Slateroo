@@ -21,4 +21,6 @@
 <fullyQualifiedTypeName name="items.SlowSteerItem"/>
 <fullyQualifiedTypeName name="items.superClasses.Item"/>
 <fullyQualifiedTypeName name="items.superClasses.MultiplePlayerEffectItem"/>
+<fullyQualifiedTypeName name="ai.Environment"/>
+<fullyQualifiedTypeName name="ai.AIConstants"/>
 </qualifiedTypeNameHistroy>

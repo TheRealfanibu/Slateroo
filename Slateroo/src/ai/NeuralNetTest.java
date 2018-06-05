@@ -13,9 +13,9 @@ public class NeuralNetTest {
 				{0,0,1,1},
 				{0,1,0,1}
 		};
+		int trainingExamples = 4;
 		double[] y = {0,1,1,0};
 		double lr = 0.01;
-		double oneOverM = 1d / x[0].length;
 		Matrix X = Matrix.fromArray(x);
 		Matrix Y = Matrix.fromArray(y);
 		for(int i = 0; i < 1000; i++) {
@@ -23,13 +23,12 @@ public class NeuralNetTest {
 			UnaryOperator<Double> sigmoid = z -> 1 / (1 + Math.exp(-z));
 			Matrix A = Z.applyToEveryElement(sigmoid);
 			Matrix dZ = Matrix.subtract(A, Y);
-			Matrix dW = Matrix.multiply(X, dZ.transpose()).multiplyWithNumber(oneOverM);
-			double dB = dZ.sum() * oneOverM;
+			Matrix dW = Matrix.multiply(X, dZ.transpose()).multiplyWithNumber(1 / trainingExamples);
+			double dB = dZ.sum() * (1 / trainingExamples);
 			weights = Matrix.subtract(weights, dW.multiplyWithNumber(lr));
 			bias = bias - lr * dB;
 
 		}
-		double[] test = {1,0};
 		Matrix testM = Matrix.fromArray(test).transpose();
 		Matrix Z = Matrix.multiply(weights.transpose(), testM).addNumber(bias);
 		UnaryOperator<Double> sigmoid = z -> 1 / (1 + Math.exp(-z));
