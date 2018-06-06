@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
+import ai.Environment;
 import gui.Frame;
 import io.Direction;
 import io.Steering;
@@ -53,7 +54,7 @@ public class Snake {
 	/**
 	 * The step amount of which the snake becomes less visible every frame when it has collided
 	 */
-	private static final float D_FADE = (1 / FADE_TIME) / Main.FPS;
+	private static final float D_FADE = (1 / FADE_TIME) / Environment.FPS;
 	/**
 	 * every {@code STARVATION_PERIOD} seconds one {@link SnakeTile} gets removed -> starvation
 	 */
@@ -128,13 +129,11 @@ public class Snake {
 	 * Creates a snake instance
 	 * @param steer The {@link Steering} instance this snake is going to be steered by
 	 */
-	public Snake(Steering steer) {
+	public Snake(boolean steeredByAI) {
 		instances++;
-			
-		this.steerManager = steer;
 		
 		tilesLock = new ReentrantReadWriteLock(true);
-		steeredByAI = true;//steer.isAISteering();
+		this.steeredByAI = steeredByAI;
 		if(steeredByAI)
 			timeEffects = new ArrayList<>();
 		
@@ -182,9 +181,9 @@ public class Snake {
 	 * If this snake is not collided then it should move.
 	 * If this snake is collided but not faded out then it should fade out.
 	 */
-	public void takeAction() {
+	public void takeAction(Direction moveDir) {
 		if(!collided)
-			move();
+			move(moveDir);
 		else if(visible)
 			fadeOut();
 	}
@@ -192,8 +191,7 @@ public class Snake {
 	/**
 	 * Initiates the movement for every {@link SnakeTile} of this snake.
 	 */
-	private void move() {
-		Direction moveDir = steerManager.getMoveDirection();
+	private void move(Direction moveDir) {
 		head.move(reverseSteering ? moveDir.reverse() : moveDir);
 		
 		SnakeTile tileNow, tileBefore = head;
@@ -492,6 +490,10 @@ public class Snake {
 	 */
 	public List<TimeEffect> getItemClassTimeEffects(Class<?> itemClass) {
 		return timeEffects.stream().filter(timeEffect -> timeEffect.getItemClass() == itemClass).collect(Collectors.toList());
+	}
+	
+	public boolean isSteeredByAI() {
+		return steeredByAI && !collided;
 	}
 	
 	public HeadTile getHead() {

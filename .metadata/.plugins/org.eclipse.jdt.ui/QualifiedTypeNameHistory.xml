@@ -21,6 +21,10 @@
 <fullyQualifiedTypeName name="items.SlowSteerItem"/>
 <fullyQualifiedTypeName name="items.superClasses.Item"/>
 <fullyQualifiedTypeName name="items.superClasses.MultiplePlayerEffectItem"/>
-<fullyQualifiedTypeName name="ai.Environment"/>
 <fullyQualifiedTypeName name="ai.AIConstants"/>
+<fullyQualifiedTypeName name="utilities.Utils"/>
+<fullyQualifiedTypeName name="ai.Environment"/>
+<fullyQualifiedTypeName name="ai.A3C.Constants"/>
+<fullyQualifiedTypeName name="java.util.EnumSet"/>
+<fullyQualifiedTypeName name="io.Direction"/>
 </qualifiedTypeNameHistroy>

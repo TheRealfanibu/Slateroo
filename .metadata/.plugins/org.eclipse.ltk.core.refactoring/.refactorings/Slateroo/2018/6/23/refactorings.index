@@ -2,3 +2,8 @@
 1528223386126	Rename local variable 'sigmoid'
 1528224712712	Rename field 'aiTraining'
 1528225640637	Rename method 'onDestroy'
+1528294719660	Rename package 'ai.a3c'
+1528294958124	Delete element
+1528296149891	Rename method 'getEnvironmentStates'
+1528296471955	Rename method 'getStates'
+1528299785032	Rename method 'calcStates'

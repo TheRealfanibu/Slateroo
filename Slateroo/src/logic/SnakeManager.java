@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Collectors;
 
 import game.IntersectionUtils;
-import io.KeyboardSteering;
+import io.Direction;
 import items.manage.ItemManager;
 import items.manage.ItemSpawner;
 import items.superClasses.Item;
@@ -33,13 +33,13 @@ public class SnakeManager {
 	 */
 	private boolean running = true;
 	
-	public SnakeManager(KeyboardSteering keyb, ItemManager itemManager) {
+	public SnakeManager(int snakeAmount, int playerAmount, ItemManager itemManager) {
 		this.itemManager = itemManager;
 		
 		Item.setSnakeManager(this);
 		ItemSpawner.setSnakeManager(this);
 		
-		initSnakes(keyb);
+		initSnakes(snakeAmount, playerAmount);
 	}
 	/**
 	 * Checks for every {@link Snake} in the game if it collides with another Snake. If so, then
@@ -122,8 +122,10 @@ public class SnakeManager {
 	/**
 	 * Calls the {@code takeAction()} method for every {@link Snake}
 	 */
-	public void takeActionForEachSnake() {
-		snakes.forEach(snake -> snake.takeAction());	
+	public void takeActionForEachSnake(Direction[] snakeActions) {
+		for(int i = 0; i < snakes.size(); i++) {
+			snakes.get(i).takeAction(snakeActions[i]);
+		}
 	}
 	
 	/**
@@ -146,11 +148,14 @@ public class SnakeManager {
 	 * Initializes the amount of snakes wanted
 	 * @param keyb The user input for steering the snake with a keyboard
 	 */
-	private void initSnakes(KeyboardSteering keyb) {
+	private void initSnakes(int snakeAmount, int playerAmount) {
 		snakes = new CopyOnWriteArrayList<>();
 		
-		for(int i = 0; i < 4; i++) {
-			snakes.add(new Snake(keyb));
+		for(int i = 0; i < snakeAmount; i++) {
+			if(i < playerAmount)
+				snakes.add(new Snake(true));
+			else
+				snakes.add(new Snake(false));
 		}
 	}
 	
@@ -161,6 +166,10 @@ public class SnakeManager {
 	 */
 	public List<Snake> getSnakesExceptThisSnake(Snake snake) {
 		return snakes.stream().filter(snk -> snk != snake).collect(Collectors.toList());
+	}
+	
+	public int getSnakeAmount() {
+		return snakes.size();
 	}
 	
 	public List<Snake> getSnakes() {
