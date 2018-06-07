@@ -20,6 +20,8 @@ import items.superClasses.Item;
  *
  */
 public class SnakeManager {
+	private static final double KILLING_REWARD = 0.5;
+	
 	/**
 	 * Contains every Snake visible in the game
 	 */
@@ -31,7 +33,7 @@ public class SnakeManager {
 	/**
 	 * Indicates whether the game is running
 	 */
-	private boolean running = true;
+	private boolean gameRunning = true;
 	
 	public SnakeManager(int snakeAmount, int playerAmount, ItemManager itemManager) {
 		this.itemManager = itemManager;
@@ -59,7 +61,8 @@ public class SnakeManager {
 					continue;
 				
 				if(isSnakeCrashingIntoOtherSnake(dierSnake, killerSnake)) {
-					dierSnake.setCollided(true);
+					dierSnake.collide();
+					killerSnake.addReward(KILLING_REWARD);
 					break;
 				}
 			}
@@ -135,7 +138,7 @@ public class SnakeManager {
 	public void removeObsoleteSnakes() {
 		snakes.removeIf(snake -> !snake.isVisible());
 		if(snakes.isEmpty())
-			running = false;
+			gameRunning = false;
 	}
 	/**
 	 * Renders every snake to the frame
@@ -153,9 +156,9 @@ public class SnakeManager {
 		
 		for(int i = 0; i < snakeAmount; i++) {
 			if(i < playerAmount)
-				snakes.add(new Snake(true));
-			else
 				snakes.add(new Snake(false));
+			else
+				snakes.add(new Snake(true));
 		}
 	}
 	
@@ -177,6 +180,6 @@ public class SnakeManager {
 	}
 
 	public boolean isGameRunning() {
-		return running;
+		return gameRunning;
 	}
 }

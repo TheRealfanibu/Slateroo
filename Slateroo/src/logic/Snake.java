@@ -62,6 +62,8 @@ public class Snake {
 	/**
 	 * The amount of how many {@link Snake} objects have been instanciated
 	 */
+	private static final double COLLIDE_REWARD = -1;
+	
 	private static int instances = 0;
 	/**
 	 * Reference to the {@link Arena} instance
@@ -124,6 +126,8 @@ public class Snake {
 	 * Indicates whether this snake is visible in the game, meaning its visibility is not "0".
 	 */
 	private boolean visible = true;
+	
+	private double reward;
 	
 	/**
 	 * Creates a snake instance
@@ -205,7 +209,7 @@ public class Snake {
 		tilesLock.readLock().unlock();
 		
 		if(!invulnerable && !arena.isInTeleportMode() && arena.isSnakeCollidingWithBorder(head))
-			collided = true;
+			collide();
 			
 	}
 	
@@ -492,8 +496,23 @@ public class Snake {
 		return timeEffects.stream().filter(timeEffect -> timeEffect.getItemClass() == itemClass).collect(Collectors.toList());
 	}
 	
+	public double getAndResetReward() {
+		double rewardSave = this.reward;
+		this.reward = 0;
+		return rewardSave;
+	}
+	
+	public void collide() {
+		this.collided = true;
+		addReward(COLLIDE_REWARD);
+	}
+	
+	public void addReward(double reward) {
+		this.reward += reward;
+	}
+	
 	public boolean isSteeredByAI() {
-		return steeredByAI && !collided;
+		return steeredByAI;
 	}
 	
 	public HeadTile getHead() {
@@ -518,10 +537,6 @@ public class Snake {
 	
 	public boolean isInvulnerable() {
 		return invulnerable;
-	}
-	
-	public void setCollided(boolean collided) {
-		this.collided = collided;
 	}
 	
 	public ReadWriteLock getTilesLock() {

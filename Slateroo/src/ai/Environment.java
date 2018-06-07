@@ -1,5 +1,6 @@
 package ai;
 
+import java.util.Arrays;
 import java.util.List;
 
 import ai.A3C.Agent;
@@ -38,7 +39,7 @@ public class Environment extends Thread{
 	
 	public Environment(boolean aiTraining) {
 		this.trainAI = aiTraining;
-		init();
+		reset();
 		start();
 	}
 	
@@ -46,7 +47,7 @@ public class Environment extends Thread{
 	 * Creates instances of the classes, which only have to exist once.
 	 * It also handles the access between each other
 	 */
-	private void init() {
+	private void reset() {
 		arena = new Arena();
 		itemManager = new ItemManager();
 		snakeManager = new SnakeManager(SNAKE_AMOUNT, trainAI ? 0 : PLAYER_AMOUNT, itemManager);
@@ -74,14 +75,37 @@ public class Environment extends Thread{
 			double totalReward = 0;
 			double[][] states = calcEnvironmentStates();
 			while(true) {
+				Direction[] actions = calcSnakeActions(states);
+				gameStep(actions);
+				double[][] nextStates = calcEnvironmentStates();
+				int[] actionIndices = Arrays.stream(actions).mapToInt(action -> action.ordinal()).toArray();
+				double[] rewards = getRewardsFromSnakes();
 				
+				for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
+					double[] state = states[i];
+					int actionIndex = actionIndices[i];
+					double reward = rewards[i];
+					totalReward += reward;
+					double[] nextState = nextStates[i];
+					agent.train(state, actionIndex, reward, nextState);
+				}
 				
+				if(!snakeManager.isGameRunning())
+					break;
+				
+				states = nextStates;
 			}
+			System.out.println("Total Reward: " + totalReward);
 		}
 	}
 	
-	private double[][] evaluateOneGameStep(Direction[] snakeActions) {
-		
+	private double[] getRewardsFromSnakes() {
+		double[] rewards = new double[snakeManager.getSnakeAmount()];
+		List<Snake> snakes = snakeManager.getSnakes();
+		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
+			rewards[i] = snakes.get(i).getAndResetReward();
+		}
+		return rewards;
 	}
 	
 	private double[][] calcEnvironmentStates() {
@@ -89,8 +113,13 @@ public class Environment extends Thread{
 		List<Snake> snakes = snakeManager.getSnakes();
 		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 			Snake snake = snakes.get(i);
-			if(snake.isSteeredByAI())
-				states[i] = envInfo.calcAIInputs(snake);
+			if(snake.isSteeredByAI() && !snake.isCollided()) {
+				if(snakeManager.isGameRunning())
+					states[i] = envInfo.calcAIInputs(snake);
+				else
+					states[i] = null;
+			}
+				
 		}
 		return states;
 	}
@@ -99,6 +128,9 @@ public class Environment extends Thread{
 		Direction[] actions = new Direction[snakeManager.getSnakeAmount()];
 		List<Snake> snakes = snakeManager.getSnakes();
 		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
+			Snake snake = snakes.get(i);
+			if(snake.isCollided())
+				continue;
 			if(snakes.get(i).isSteeredByAI())
 				actions[i] = Direction.ofIndex(agent.act(envStates[i]));
 			else

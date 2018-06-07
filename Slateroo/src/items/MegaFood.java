@@ -9,6 +9,8 @@ public class MegaFood extends Item{
 
 	private static final int TILE_ADD = 20;
 	
+	private static final double COLLECT_REWARD = 0.3;
+	
 	public MegaFood(int x, int y) {
 		super(x, y, "burger");
 	}
@@ -16,6 +18,7 @@ public class MegaFood extends Item{
 	@Override
 	protected void intersectionHandling(Snake snake) {
 		snake.addTilesToTail(TILE_ADD);
+		snake.addReward(COLLECT_REWARD);
 	}
 	
 }

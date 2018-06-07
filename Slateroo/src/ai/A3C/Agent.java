@@ -52,7 +52,7 @@ public class Agent {
 		}
 	}
 	
-	public void train(double s, double a, double r, double s_){
+	public void train(double[] s, int a, double r, double[] s_){
 		
 		this.r_Agent = (this.r_Agent + r*Constants.GAMMA_N) / Constants.GAMMA;
 		int n = memory.length;

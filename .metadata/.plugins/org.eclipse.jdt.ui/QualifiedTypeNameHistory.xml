@@ -27,4 +27,5 @@
 <fullyQualifiedTypeName name="ai.A3C.Constants"/>
 <fullyQualifiedTypeName name="java.util.EnumSet"/>
 <fullyQualifiedTypeName name="io.Direction"/>
+<fullyQualifiedTypeName name="java.util.Arrays"/>
 </qualifiedTypeNameHistroy>
