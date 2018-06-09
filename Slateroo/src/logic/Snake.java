@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
-import ai.Environment;
 import gui.Frame;
 import io.Direction;
 import io.Steering;
@@ -54,7 +53,7 @@ public class Snake {
 	/**
 	 * The step amount of which the snake becomes less visible every frame when it has collided
 	 */
-	private static final float D_FADE = (1 / FADE_TIME) / Environment.FPS;
+	private static final float D_FADE = (1 / FADE_TIME) / Main.FPS;
 	/**
 	 * every {@code STARVATION_PERIOD} seconds one {@link SnakeTile} gets removed -> starvation
 	 */
@@ -62,8 +61,6 @@ public class Snake {
 	/**
 	 * The amount of how many {@link Snake} objects have been instanciated
 	 */
-	private static final double COLLIDE_REWARD = -1;
-	
 	private static int instances = 0;
 	/**
 	 * Reference to the {@link Arena} instance
@@ -127,17 +124,17 @@ public class Snake {
 	 */
 	private boolean visible = true;
 	
-	private double reward;
-	
 	/**
 	 * Creates a snake instance
 	 * @param steer The {@link Steering} instance this snake is going to be steered by
 	 */
-	public Snake(boolean steeredByAI) {
+	public Snake(Steering steer) {
 		instances++;
+			
+		this.steerManager = steer;
 		
 		tilesLock = new ReentrantReadWriteLock(true);
-		this.steeredByAI = steeredByAI;
+		steeredByAI = true;//steer.isAISteering();
 		if(steeredByAI)
 			timeEffects = new ArrayList<>();
 		
@@ -185,9 +182,9 @@ public class Snake {
 	 * If this snake is not collided then it should move.
 	 * If this snake is collided but not faded out then it should fade out.
 	 */
-	public void takeAction(Direction moveDir) {
+	public void takeAction() {
 		if(!collided)
-			move(moveDir);
+			move();
 		else if(visible)
 			fadeOut();
 	}
@@ -195,7 +192,8 @@ public class Snake {
 	/**
 	 * Initiates the movement for every {@link SnakeTile} of this snake.
 	 */
-	private void move(Direction moveDir) {
+	private void move() {
+		Direction moveDir = steerManager.getMoveDirection();
 		head.move(reverseSteering ? moveDir.reverse() : moveDir);
 		
 		SnakeTile tileNow, tileBefore = head;
@@ -209,7 +207,7 @@ public class Snake {
 		tilesLock.readLock().unlock();
 		
 		if(!invulnerable && !arena.isInTeleportMode() && arena.isSnakeCollidingWithBorder(head))
-			collide();
+			collided = true;
 			
 	}
 	
@@ -454,7 +452,7 @@ public class Snake {
 		head.changeVelocity(velocityAmount);
 	}
 	/**
-	 * Changes the speed of rotation of this snake.
+	 * Changes the speed of rotatation of this snake.
 	 * This method is executed when collecting a {@link SlowSteerItem} or if the effect is reseted
 	 * @param angleAmount The factor by which the speed of the snake gets multiplied
 	 */
@@ -496,25 +494,6 @@ public class Snake {
 		return timeEffects.stream().filter(timeEffect -> timeEffect.getItemClass() == itemClass).collect(Collectors.toList());
 	}
 	
-	public double getAndResetReward() {
-		double rewardSave = this.reward;
-		this.reward = 0;
-		return rewardSave;
-	}
-	
-	public void collide() {
-		this.collided = true;
-		addReward(COLLIDE_REWARD);
-	}
-	
-	public void addReward(double reward) {
-		this.reward += reward;
-	}
-	
-	public boolean isSteeredByAI() {
-		return steeredByAI;
-	}
-	
 	public HeadTile getHead() {
 		return head;
 	}
@@ -537,6 +516,10 @@ public class Snake {
 	
 	public boolean isInvulnerable() {
 		return invulnerable;
+	}
+	
+	public void setCollided(boolean collided) {
+		this.collided = collided;
 	}
 	
 	public ReadWriteLock getTilesLock() {

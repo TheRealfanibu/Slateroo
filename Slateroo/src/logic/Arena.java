@@ -59,7 +59,7 @@ public class Arena {
 	/**
 	 * The background color of the arena
 	 */
-	private static final Color ARENA_COLOR = new Color(210,105,30);
+	private static final Color ARENA_COLOR = new Color(210,105,30); // schokoladenbraun
 	/**
 	 * Indicates whether the arena is in teleport mode which can be activated by collecting an {@link TeleportBorderItem}
 	 */

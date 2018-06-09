@@ -1,8 +1,6 @@
 package ai.A3C;
 
 public class Constants {
-	public static final int NUM_ACTIONS = 3;
-	public static final int TRAIN_ENVS = 4;
 	public static final double GAMMA = 0.99;
 	public static final double N_STEP_RETURN = 8;
 	public static final double GAMMA_N = Math.pow(GAMMA, N_STEP_RETURN);

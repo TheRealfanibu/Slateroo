@@ -1,12 +1,20 @@
 package logic;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
-import ai.AIConstants;
-import ai.Environment;
+import ai.EnvironmentInfo;
 import ai.NeuralNetwork;
+import ai.ObjectDetector;
+import game.FPSCounter;
+import gui.Frame;
+import io.KeyboardSteering;
+import items.manage.ItemManager;
+import render.GamePanel;
 import utilities.StopWatch;
+import utilities.Utils;
 
 /**
  * The class which contains the main method for the program.
@@ -14,47 +22,65 @@ import utilities.StopWatch;
  * @author Jonas
  */
 public class Main {
-	private boolean trainAI = true;
+	public static final int FPS = 140;
+	private static final int SLEEP_TIME = (int) Math.round(1000d / FPS);
 	
-	private List<Environment> environments = new ArrayList<>();
+	private SnakeManager snakeManager;
+	private ItemManager itemManager;
+	
+	private KeyboardSteering keyListener;
+	private Frame frame;
+	private GamePanel gamePanel;
+	private Arena arena;
+	
+	private EnvironmentInfo envInfo;
+	private ObjectDetector objectDetector;
 	
 	/**
 	 * The constructor which has to be called first in the program.
 	 * It creates the application
 	 */
 	public Main() {
-		if(trainAI)
-			createTrainingEnvironments();
-		else
-			createUserEnvironment();
-		
-		addOnDestroy();
+		init();
+		gameLoop();
 	}
 	
-	private void createTrainingEnvironments() {
-		for(int i = 0; i < AIConstants.TRAIN_ENVS; i++) {
-			environments.add(new Environment(true));
+	/**
+	 * Creates instances of the classes, which only have to exist once.
+	 * It also handles the access between each other
+	 */
+	private void init() {
+		arena = new Arena();
+		keyListener = new KeyboardSteering();
+		itemManager = new ItemManager();
+		snakeManager = new SnakeManager(keyListener, itemManager);
+		objectDetector = new ObjectDetector(snakeManager, itemManager);
+		envInfo = new EnvironmentInfo(objectDetector);
+		gamePanel = new GamePanel(snakeManager, itemManager, arena);
+		frame = new Frame(gamePanel);
+		frame.addKeyListener(keyListener);
+	}
+	
+	/**
+	 * This method contains a loop running all the time during the game and controlling the actions which happen in the game
+	 */
+	private void gameLoop() {
+		FPSCounter fps = new FPSCounter("main", 5);
+		while(snakeManager.isGameRunning()) {
+			fps.count();
+			snakeManager.takeActionForEachSnake();
+			snakeManager.removeObsoleteSnakes();
+			snakeManager.checkSnakeCrashes();
+			snakeManager.checkSnakeItemIntersections();
+			itemManager.removeActivatedItems();
+			if(!snakeManager.getSnakes().isEmpty())
+				envInfo.calcAIInputs(snakeManager.getSnakes().get(0));
+			gamePanel.repaint();
+			Utils.sleep(SLEEP_TIME);
 		}
+		System.exit(0);
 	}
 	
-	private void createUserEnvironment() {
-		environments.add(new Environment(false));
-	}
-	
-	private void addOnDestroy() {
-		Runnable shutdownHook = () -> {
-			for(Environment env : environments) {
-				env.interrupt();
-				try {
-					env.join();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		};
-		Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook));
-	}
-
 	/**
 	 * The method which the JVM calls when starting the program
 	 * @param args - Console inputs (not needed here)

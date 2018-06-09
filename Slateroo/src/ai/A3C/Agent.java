@@ -1,9 +1,6 @@
 package ai.A3C;
 
-import java.util.EnumSet;
 import java.util.Random;
-
-import io.Direction;
 
 public class Agent {
 	Random random = new Random();
@@ -37,14 +34,13 @@ public class Agent {
 		}
 	}
 	
-	public int act(double[] s){
+	public double act(double s){
 		double eps = this.getEpsilon();
 		frames += 1;
 		
 		if(random.nextDouble() < eps){
 			return random.nextInt();
 		}else{
-			EnumSet<Direction> set = EnumSet.o
 			double p = brain.predict_p(s);
 			
 			double a = ;
@@ -52,7 +48,7 @@ public class Agent {
 		}
 	}
 	
-	public void train(double[] s, int a, double r, double[] s_){
+	public void train(double s, double a, double r, double s_){
 		
 		this.r_Agent = (this.r_Agent + r*Constants.GAMMA_N) / Constants.GAMMA;
 		int n = memory.length;

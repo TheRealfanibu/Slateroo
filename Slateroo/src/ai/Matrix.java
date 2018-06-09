@@ -2,7 +2,6 @@ package ai;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.function.UnaryOperator;
 
 import game.IllegalDimensionsException;
 
@@ -111,32 +110,11 @@ public class Matrix {
 	}
 
 	
-	public Matrix multiplyWithNumber(double factor) {
+	public Matrix scale(double factor) {
 		double[][] newMatrix = new double[rows][columns];
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				newMatrix[i][j] = matrix[i][j] * factor;
-			}
-		}
-		return new Matrix(newMatrix);
-	}
-	
-
-	public Matrix addNumber(double number) {
-		double[][] newMatrix = new double[rows][columns];
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				newMatrix[i][j] = matrix[i][j] + number;
-			}
-		}
-		return new Matrix(newMatrix);
-	}
-	
-	public Matrix applyToEveryElement(UnaryOperator<Double> operation) {
-		double[][] newMatrix = new double[rows][columns];
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				newMatrix[i][j] = operation.apply(matrix[i][j]);
 			}
 		}
 		return new Matrix(newMatrix);
@@ -171,16 +149,6 @@ public class Matrix {
 			}
 		}
 		return new Matrix(newMatrix);
-	}
-
-	public double sum() {
-		double sum = 0;
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				sum += matrix[i][j];
-			}
-		}
-		return sum;
 	}
 	
 

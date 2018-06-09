@@ -8,8 +8,6 @@ public class Food extends Item {
 	public static final double MAX_SPAWN_DIFF = 1.5;
 	
 	private static final int TILE_ADD = 10;
-	
-	private static final double COLLECT_REWARD = 0.15;
 
 	public Food(int x, int y) {
 		super(x, y, "steak");
@@ -18,6 +16,5 @@ public class Food extends Item {
 	@Override
 	protected void intersectionHandling(Snake snake) {
 		snake.addTilesToTail(TILE_ADD);
-		snake.addReward(COLLECT_REWARD);
 	}
 }

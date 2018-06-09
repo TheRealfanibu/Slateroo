@@ -51,7 +51,7 @@ public class NeuralNetwork {
 		Matrix outputFromLastLayer = inputVector;
 		for(int i = 0; i < amountWeightLayers; i++) {
 			Matrix weightedInputsToNextLayer = Matrix.multiply(weights[i], outputFromLastLayer);
-			Matrix weightedInputsPlusBiases = Matrix.add(weightedInputsToNextLayer, biases[i]);;
+			Matrix weightedInputsPlusBiases = weightedInputsToNextLayer;//Matrix.add(weightedInputsToNextLayer, biases[i]);
 			Matrix output = activationFunction(activationFunctions[i], weightedInputsPlusBiases, false);
 			outputs[i+1] = output;
 			outputFromLastLayer = output;
@@ -79,7 +79,7 @@ public class NeuralNetwork {
 			Matrix transposedOutputsFromPreviousLayer = outputs[i].transpose();
 			Matrix weightAdjustments = Matrix.multiply(gradientsProportionalToErrorAndLearningRate, transposedOutputsFromPreviousLayer);
 			weights[i] = Matrix.add(weights[i], weightAdjustments);
-			biases[i] = Matrix.add(biases[i], gradientsProportionalToErrorAndLearningRate);
+			//biases[i] = Matrix.add(biases[i], gradientsProportionalToErrorAndLearningRate);
 		}
 	}
 	

@@ -149,6 +149,14 @@ public class Matrix {
 		return new Matrix(newMatrix);
 	}
 	
+	public double[] getColumn(int column) {
+		double[] columnNumbers = new double[rows];
+		for(int i = 0; i < rows; i++) {
+			columnNumbers[i] = matrix[i][column];
+		}
+		return columnNumbers;
+	}
+	
 
 	public double getValue(int row, int column) {
 		return matrix[row][column];

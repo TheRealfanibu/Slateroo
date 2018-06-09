@@ -57,8 +57,6 @@ public abstract class Item implements GameObject{
 	 */
 	protected final int drawY;
 
-	private boolean effectActivated = false;
-	
 	/**
 	 * Creates a new item object with the specified middle point coordinates and the specified loook
 	 * @param middleX The x-coordinate of the middle point
@@ -85,13 +83,9 @@ public abstract class Item implements GameObject{
 	 * @param snake
 	 */
 	public void checkSnakeIntersection(Snake snake) {
-		if(!effectActivated) {
-			HeadTile head = snake.getHead();
-			if(IntersectionUtils.isIntersectingRectangleCircle(middleX, middleY, head.getX(), head.getY(), LENGTH, LENGTH, SnakeTile.RADIUS)) {
-				effectActivated = true;
-				intersectionHandling(snake);
-			}
-		}
+		HeadTile head = snake.getHead();
+		if(IntersectionUtils.isIntersectingRectangleCircle(middleX, middleY, head.getX(), head.getY(), LENGTH, LENGTH, SnakeTile.RADIUS))
+			intersectionHandling(snake);
 	}
 	/**
 	 * Loads the image by the specified file name and returns it
@@ -123,10 +117,6 @@ public abstract class Item implements GameObject{
 	
 	public double getY() {
 		return middleY;
-	}
-	
-	public boolean isEffectActivated() {
-		return effectActivated;
 	}
 	
 	public String toString() {

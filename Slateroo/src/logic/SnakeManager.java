@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.stream.Collectors;
 
 import game.IntersectionUtils;
-import io.Direction;
+import io.KeyboardSteering;
 import items.manage.ItemManager;
 import items.manage.ItemSpawner;
 import items.superClasses.Item;
@@ -20,8 +20,6 @@ import items.superClasses.Item;
  *
  */
 public class SnakeManager {
-	private static final double KILLING_REWARD = 0.5;
-	
 	/**
 	 * Contains every Snake visible in the game
 	 */
@@ -33,15 +31,17 @@ public class SnakeManager {
 	/**
 	 * Indicates whether the game is running
 	 */
-	private boolean gameRunning = true;
+	private boolean running = true;
 	
-	public SnakeManager(int snakeAmount, int playerAmount, ItemManager itemManager) {
+	private int snakeAmount = 4;
+	
+	public SnakeManager(KeyboardSteering keyb, ItemManager itemManager) {
 		this.itemManager = itemManager;
 		
 		Item.setSnakeManager(this);
 		ItemSpawner.setSnakeManager(this);
 		
-		initSnakes(snakeAmount, playerAmount);
+		initSnakes(keyb);
 	}
 	/**
 	 * Checks for every {@link Snake} in the game if it collides with another Snake. If so, then
@@ -61,8 +61,7 @@ public class SnakeManager {
 					continue;
 				
 				if(isSnakeCrashingIntoOtherSnake(dierSnake, killerSnake)) {
-					dierSnake.collide();
-					killerSnake.addReward(KILLING_REWARD);
+					dierSnake.setCollided(true);
 					break;
 				}
 			}
@@ -125,10 +124,8 @@ public class SnakeManager {
 	/**
 	 * Calls the {@code takeAction()} method for every {@link Snake}
 	 */
-	public void takeActionForEachSnake(Direction[] snakeActions) {
-		for(int i = 0; i < snakes.size(); i++) {
-			snakes.get(i).takeAction(snakeActions[i]);
-		}
+	public void takeActionForEachSnake() {
+		snakes.forEach(snake -> snake.takeAction());	
 	}
 	
 	/**
@@ -138,7 +135,7 @@ public class SnakeManager {
 	public void removeObsoleteSnakes() {
 		snakes.removeIf(snake -> !snake.isVisible());
 		if(snakes.isEmpty())
-			gameRunning = false;
+			running = false;
 	}
 	/**
 	 * Renders every snake to the frame
@@ -151,14 +148,11 @@ public class SnakeManager {
 	 * Initializes the amount of snakes wanted
 	 * @param keyb The user input for steering the snake with a keyboard
 	 */
-	private void initSnakes(int snakeAmount, int playerAmount) {
+	private void initSnakes(KeyboardSteering keyb) {
 		snakes = new CopyOnWriteArrayList<>();
 		
 		for(int i = 0; i < snakeAmount; i++) {
-			if(i < playerAmount)
-				snakes.add(new Snake(false));
-			else
-				snakes.add(new Snake(true));
+			snakes.add(new Snake(keyb));
 		}
 	}
 	
@@ -171,15 +165,15 @@ public class SnakeManager {
 		return snakes.stream().filter(snk -> snk != snake).collect(Collectors.toList());
 	}
 	
-	public int getSnakeAmount() {
-		return snakes.size();
-	}
-	
 	public List<Snake> getSnakes() {
 		return snakes;
 	}
+	
+	public int getSnakeAmount() {
+		return snakeAmount;
+	}
 
 	public boolean isGameRunning() {
-		return gameRunning;
+		return running;
 	}
 }
