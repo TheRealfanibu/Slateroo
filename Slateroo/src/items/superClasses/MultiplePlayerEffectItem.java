@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import items.manage.ItemEffectMode;
 import logic.Snake;
+import logic.SnakeManager;
 
 /**
  * This superclass represents items which either have an effect on only the snake which collects the item or every snake
@@ -54,8 +55,9 @@ public abstract class MultiplePlayerEffectItem extends Item{
 	 * @param mode The effect mode
 	 * @param iconName The name of the image file that contains the look of this item
 	 */
-	public MultiplePlayerEffectItem(int x, int y, ItemEffectMode mode, String iconName) {
-		super(x, y, iconName);
+	public MultiplePlayerEffectItem(int x, int y, ItemEffectMode mode,
+			SnakeManager snakeManager, String iconName) {
+		super(x, y, snakeManager, iconName);
 		
 		this.effectMode = mode;
 		thisMode = mode == ItemEffectMode.THIS;

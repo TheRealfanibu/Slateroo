@@ -59,7 +59,7 @@ public class Arena {
 	/**
 	 * The background color of the arena
 	 */
-	private static final Color ARENA_COLOR = new Color(210,105,30); // schokoladenbraun
+	private static final Color ARENA_COLOR = new Color(210,105,30);
 	/**
 	 * Indicates whether the arena is in teleport mode which can be activated by collecting an {@link TeleportBorderItem}
 	 */
@@ -69,7 +69,6 @@ public class Arena {
 	 */
 	public Arena() {
 		TeleportBorderItem.setArena(this);
-		Snake.setArena(this);
 	}
 	
 	/**

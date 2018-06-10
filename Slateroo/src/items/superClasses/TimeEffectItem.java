@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import items.manage.TimeEffect;
 import items.markerInterfaces.ITimeEffectItem;
 import logic.Snake;
+import logic.SnakeManager;
 
 /**
  * This superclass represents items which are not {@link MultiplePlayerEffectItem} but have a time-based effect.
@@ -25,8 +26,8 @@ public abstract class TimeEffectItem extends Item implements ITimeEffectItem{
 	 * @param iconName The name of the image file that contains the look of this item
 	 * @param effectTime The time the effect of this item should be activated in seconds
 	 */
-	public TimeEffectItem(int x, int y, String iconName, double effectTime) {
-		super(x, y, iconName);
+	public TimeEffectItem(int x, int y, SnakeManager snakeManager, String iconName, double effectTime) {
+		super(x, y, snakeManager, iconName);
 		
 		this.effectTime = (long) (effectTime * 1000);
 	}

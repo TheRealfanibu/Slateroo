@@ -7,6 +7,7 @@ import items.manage.ItemEffectMode;
 import items.manage.TimeEffect;
 import items.markerInterfaces.ITimeEffectItem;
 import logic.Snake;
+import logic.SnakeManager;
 /**
  * This superclass represents item which are {@link TimeEffectItem}s and also {@link MultiplePlayerEffectItem}s at the same time.
  * Due to the non-existence of multiple inheritance which would be benefical here, this class inherits from {@link MultiplePlayerEffectItem}
@@ -27,8 +28,9 @@ public abstract class MultiplePlayerTimeEffectItem extends MultiplePlayerEffectI
 	 * @param iconName The name of the image file that contains the look of this item
 	 * @param effectTime The time the effect of this item should be activated in seconds
 	 */
-	public MultiplePlayerTimeEffectItem(int x, int y, ItemEffectMode mode, String iconName, double effectTime) {
-		super(x, y, mode, iconName);
+	public MultiplePlayerTimeEffectItem(int x, int y, ItemEffectMode mode, 
+			SnakeManager snakeManager, String iconName, double effectTime) {
+		super(x, y, mode, snakeManager, iconName);
 		
 		this.effectTime = (long) (effectTime * 1000);
 	}

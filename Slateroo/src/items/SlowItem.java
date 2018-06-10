@@ -4,6 +4,7 @@ import items.manage.ItemEffectMode;
 import items.markerInterfaces.IStackableEffectItem;
 import items.superClasses.MultiplePlayerTimeEffectItem;
 import logic.Snake;
+import logic.SnakeManager;
 
 public class SlowItem extends MultiplePlayerTimeEffectItem implements IStackableEffectItem{
 	public static final double AVG_SPAWN_TIME = 30;
@@ -12,8 +13,8 @@ public class SlowItem extends MultiplePlayerTimeEffectItem implements IStackable
 	private static final double EFFECT_TIME = 5;
 	private static final double SPEED_CHANGE = -150;
 	
-	public SlowItem(int x, int y, ItemEffectMode mode) {
-		super(x, y, mode, "ie", EFFECT_TIME);
+	public SlowItem(int x, int y, ItemEffectMode mode, SnakeManager snakeManager) {
+		super(x, y, mode, snakeManager, "ie", EFFECT_TIME);
 	}
 
 	@Override

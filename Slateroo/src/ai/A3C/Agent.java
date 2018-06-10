@@ -1,5 +1,7 @@
 package ai.A3C;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Agent {
@@ -13,13 +15,14 @@ public class Agent {
 	private double eps_End;
 	private double eps_Steps;
 	private double r_Agent = 0;
-	private double[][] memory;
+	private List<Sample> memory;
 	private DistributedRandomNumberGenerator generator = new DistributedRandomNumberGenerator();
 	
 	public Agent(double eps_Start, double eps_End, double eps_Steps) {
 		this.eps_Start = eps_Start;
 		this.eps_End = eps_End;
 		this.eps_Steps = eps_Steps;
+		memory = new ArrayList<>();
 	}
 
 	public Agent(){
@@ -34,60 +37,55 @@ public class Agent {
 		}
 	}
 	
-	public double act(double s){
+	public int act(double[] state){
 		double eps = this.getEpsilon();
 		frames += 1;
 		
 		if(random.nextDouble() < eps){
-			return random.nextInt();
+			return random.nextInt(AIConstants.NUM_ACTIONS-1);
 		}else{
-			double p = brain.predict_p(s);
-			
-			double a = ;
-			return a ;
+			double[] probabilities = brain.predict_p(state);
+
+			int a = generator.getDistributedRandomNumber(probabilities);
+			return a;
 		}
 	}
 	
-	public void train(double s, double a, double r, double s_){
+	public void train(double[] s, int a, double r, double[] s_){
 		
-		this.r_Agent = (this.r_Agent + r*Constants.GAMMA_N) / Constants.GAMMA;
-		int n = memory.length;
+		double[] a_cats = new double[memory.size()];
+		a_cats[a] = 1;
+		Sample sample = new Sample(s, a_cats, this.r_Agent, s_);
+		memory.add(sample);
 		
-		if(s_ != 0){
-			while(memory.length > 0){
-				double[] samples = this.getSamples(this.memory, n);
+		this.r_Agent = (this.r_Agent + r*AIConstants.GAMMA_N) / AIConstants.GAMMA;
+		
+		if(s_ == null){
+			while(memory.size() > 0){
+				int n = memory.size();
+				double[][] samples = this.getSample(n);
 				brain.trainPush(samples);
-				this.r_Agent = (this.r_Agent - this.memory[0][2]) / Constants.GAMMA;
-				this.memory = this.removeRow(memory,0);
+				Sample sample_0 = this.memory.get(0);
+				this.r_Agent = (this.r_Agent - sample_0.getR()) / AIConstants.GAMMA;
+				this.memory.remove(0);
 			}
 			this.r_Agent = 0;
 		}
 		
-		if(memory.length >= Constants.N_STEP_RETURN){
-			double[] samples = this.getSamples(this.memory, n);
+		if(memory.size() >= AIConstants.N_STEP_RETURN){
+			double[][] samples = this.getSample(AIConstants.N_STEP_RETURN);
 			brain.trainPush(samples);
-			this.r_Agent = (this.r_Agent - this.memory[0][2]) / Constants.GAMMA;
+			Sample sample_0 = this.memory.get(0);
+			this.r_Agent = (this.r_Agent - sample_0.getR()) / AIConstants.GAMMA;
 		}
 		
 	}
 	
-	private double[] getSamples(double[][] thisMemory, int n){
-		double[] samples = {thisMemory[n][0], thisMemory[n][1], this.r_Agent, thisMemory[n-1][3]};
-		return samples;
-	}
-	
-	private double[][] removeRow(double[][]array, int row){
-		int r = 0;
-		double[][] copyArray = new double[array.length-1][array[0].length];
-		for(int i = 0; i < array.length; i++){
-			for(int j = 0; j < array[1].length; j++){
-				if(i != row){
-					copyArray[r][j] = array[i][j];
-				}
-			}
-			if(i != row){r++;}
-		}
-		return copyArray;
+	private double[][] getSample(int n){
+		Sample sample_0 = memory.get(0);
+		Sample sample_N = memory.get(n-1);
+		double[][] sample = {sample_0.getS(), sample_0.getOnehot_A(), {this.r_Agent}, sample_N.getS_()}; 
+		return sample;
 	}
 	
 }

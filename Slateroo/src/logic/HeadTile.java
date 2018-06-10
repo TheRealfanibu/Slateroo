@@ -1,8 +1,8 @@
 package logic;
 
-import java.awt.Graphics;
 import java.io.Serializable;
 
+import ai.Environment;
 import gui.Frame;
 import io.Direction;
 import items.SlowItem;
@@ -22,7 +22,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 	/**
 	 * The default distance the head of a snake moves per frame
 	 */
-	public static final double D_VELOCITY = (double) VELOCITY / Main.FPS;
+	public static final double D_VELOCITY = (double) VELOCITY / Environment.FPS;
 	/**
 	 * The default angle the head of a snake rotates in the circle when moving to the left or right, measured in degrees per second
 	 */
@@ -30,7 +30,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 	/**
 	 * The default angle the head of a snake rotates in the circle when moving to the left or right, measured in degrees
 	 */
-	private static final double D_ROTATION_ANGLE = (double) ROTATION_ANGLE / Main.FPS;
+	private static final double D_ROTATION_ANGLE = (double) ROTATION_ANGLE / Environment.FPS;
 	/**
 	 * The default radius of the circle on which the snake is rotating on when moving to the left or right
 	 */
@@ -156,7 +156,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 	 * and a value < 0 decreases the velocity
 	 */
 	public void changeVelocity(double velocityAmount) {
-		double changeFactor = (velocityAmount / (dVelocity * Main.FPS)) + 1;
+		double changeFactor = (velocityAmount / (dVelocity * Environment.FPS)) + 1;
 		dVelocity *= changeFactor;
 		dRotationAngle *= changeFactor;
 		velocityChanged = true;
@@ -170,7 +170,7 @@ public class HeadTile extends SnakeTile implements Serializable{
 	 * radius of the circle becomes larger
 	 */
 	public void changeSteerAngle(double angleAmount) {
-		double changeFactor = (angleAmount / (dRotationAngle * Main.FPS)) + 1;
+		double changeFactor = (angleAmount / (dRotationAngle * Environment.FPS)) + 1;
 		dRotationAngle *= changeFactor;
 		circleRadius /= changeFactor;
 	}

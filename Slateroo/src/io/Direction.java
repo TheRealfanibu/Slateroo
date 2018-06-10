@@ -11,4 +11,14 @@ public enum Direction {
 		else
 			return MIDDLE;
 	}
+	
+	public static Direction ofIndex(int index) {
+		switch(index) {
+		case 0: return MIDDLE;
+		case 1: return LEFT;
+		case 2: return RIGHT;
+		}
+		throw new IllegalArgumentException("The index to convert to a Direction object must be in the range between 0 and 2: " + index);
+	}
+	
 }

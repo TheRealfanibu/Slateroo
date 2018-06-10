@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ai.A3C.Agent;
-import ai.A3C.Constants;
+import ai.A3C.AIConstants;
 import game.FPSCounter;
 import gui.Frame;
 import io.Direction;
@@ -49,10 +49,10 @@ public class Environment extends Thread{
 	 */
 	private void reset() {
 		arena = new Arena();
-		itemManager = new ItemManager();
-		snakeManager = new SnakeManager(SNAKE_AMOUNT, trainAI ? 0 : PLAYER_AMOUNT, itemManager);
+		snakeManager = new SnakeManager(SNAKE_AMOUNT, trainAI ? 0 : PLAYER_AMOUNT, arena);
+		itemManager = new ItemManager(snakeManager);
 		if(trainAI) {
-			agent = new Agent();
+			//agent = new Agent();
 			objectDetector = new ObjectDetector(snakeManager, itemManager);
 			envInfo = new EnvironmentInfo(objectDetector);
 		} else {
@@ -109,7 +109,7 @@ public class Environment extends Thread{
 	}
 	
 	private double[][] calcEnvironmentStates() {
-		double[][] states = new double[snakeManager.getSnakeAmount()][Constants.TRAIN_ENVS];
+		double[][] states = new double[snakeManager.getSnakeAmount()][AIConstants.TRAIN_ENVS];
 		List<Snake> snakes = snakeManager.getSnakes();
 		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 			Snake snake = snakes.get(i);
@@ -143,7 +143,7 @@ public class Environment extends Thread{
 		snakeManager.takeActionForEachSnake(snakeActions);
 		snakeManager.removeObsoleteSnakes();
 		snakeManager.checkSnakeCrashes();
-		snakeManager.checkSnakeItemIntersections();
+		itemManager.checkSnakeItemIntersections();
 		itemManager.removeActivatedItems();
 	}
 	

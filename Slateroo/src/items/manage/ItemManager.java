@@ -10,22 +10,38 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import game.IntersectionUtils;
 import items.superClasses.Item;
 import logic.ObjectSequence;
+import logic.Snake;
+import logic.SnakeManager;
 
 public class ItemManager {
 	private static final int MAX_ITEM_AMOUNT = 10;
 	
-	static {
-		for(Class<?> itemClass : ObjectSequence.getItemClasses()) // create Item Spawners
-			new ItemSpawner(itemClass);
-	}
+	private SnakeManager snakeManager;
+
 	
 	private List<Item> items;
 	
-	public ItemManager() {
-		ItemSpawner.setItemManager(this);
-
+	public ItemManager(SnakeManager snakeManager) {
+		this.snakeManager = snakeManager;
 		items = new CopyOnWriteArrayList<>(); // rendering happens on different thread -> removing items could lead to ConcurrentModificationException
 											  // thats why we are using a thread-safe list
+	}
+	
+	private void createItemSpawners() {
+		for(Class<?> itemClass : ObjectSequence.getItemClasses()) // create Item Spawners
+			new ItemSpawner(this, snakeManager, itemClass);
+	}
+	
+	/**
+	 * Checks for every snake whether the snake is intersecting the item and therefore collecting it
+	 */
+	public void checkSnakeItemIntersections() {
+		for(Snake snake : snakeManager.getSnakes()) {
+			for(Item item : items) {
+				if(!snake.isCollided())
+					item.checkSnakeIntersection(snake);
+			}
+		}
 	}
 	
 	public boolean isItemIntersectingExistingItem(Point coords) {	

@@ -4,19 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import logic.Snake;
+import logic.SnakeManager;
 
 public class EffectCounter {
 	private Map<Snake, Integer> snakeEffectCount = new HashMap<>();
 	
-	private int effectCount = 0; // if the effect Count is not associated with a snake
+	private Map<SnakeManager, Integer> effectCount = new HashMap<>(); // if the effect Count is not associated with a snake
 	
-	public void increment() {
-		effectCount++;
+	
+	public void increment(SnakeManager manager) {
+		effectCount.merge(manager, 1, Integer::sum);
 	}
 	
-	public boolean decrement() {
-		effectCount--;
-		return effectCount == 0;
+	public boolean decrement(SnakeManager manager) {
+		int newCount = effectCount.computeIfPresent(manager, (mng, count) -> count - 1);
+		return newCount == 0;
 	}
 	
 	public void increment(Snake snake) {

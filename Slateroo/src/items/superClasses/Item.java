@@ -33,7 +33,7 @@ public abstract class Item implements GameObject{
 	/**
 	 * Every item has access to the snake manager object
 	 */
-	protected static SnakeManager snakeManager;
+	protected SnakeManager snakeManager;
 	/**
 	 * The visual look of this item in the game		
 	 */
@@ -57,15 +57,18 @@ public abstract class Item implements GameObject{
 	 */
 	protected final int drawY;
 
+	private boolean effectActivated = false;
+	
 	/**
 	 * Creates a new item object with the specified middle point coordinates and the specified loook
 	 * @param middleX The x-coordinate of the middle point
 	 * @param middleY The y-coordinate of the middle point
 	 * @param iconName The name of the image file that contains the look of this item
 	 */
-	public Item(int middleX, int middleY, String iconName) {
+	public Item(int middleX, int middleY,  SnakeManager snakeManager, String iconName) {
 		this.middleX = middleX;
 		this.middleY = middleY;
+		this.snakeManager = snakeManager;
 		
 		drawX = middleX - LENGTH_HALF + Arena.BORDER_HITBOX;
 		drawY = middleY - LENGTH_HALF + Arena.BORDER_HITBOX;
@@ -83,9 +86,13 @@ public abstract class Item implements GameObject{
 	 * @param snake
 	 */
 	public void checkSnakeIntersection(Snake snake) {
-		HeadTile head = snake.getHead();
-		if(IntersectionUtils.isIntersectingRectangleCircle(middleX, middleY, head.getX(), head.getY(), LENGTH, LENGTH, SnakeTile.RADIUS))
-			intersectionHandling(snake);
+		if(!effectActivated) {
+			HeadTile head = snake.getHead();
+			if(IntersectionUtils.isIntersectingRectangleCircle(middleX, middleY, head.getX(), head.getY(), LENGTH, LENGTH, SnakeTile.RADIUS)) {
+				effectActivated = true;
+				intersectionHandling(snake);
+			}
+		}
 	}
 	/**
 	 * Loads the image by the specified file name and returns it
@@ -107,16 +114,16 @@ public abstract class Item implements GameObject{
 		g.drawImage(icon, drawX, drawY, LENGTH, LENGTH, null);
 	}
 	
-	public static void setSnakeManager(SnakeManager manager) {
-		snakeManager = manager;
-	}
-	
 	public double getX() {
 		return middleX;
 	}
 	
 	public double getY() {
 		return middleY;
+	}
+	
+	public boolean isEffectActivated() {
+		return effectActivated;
 	}
 	
 	public String toString() {

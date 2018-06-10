@@ -4,6 +4,7 @@ import items.manage.EffectCounter;
 import items.manage.ItemEffectMode;
 import items.superClasses.MultiplePlayerTimeEffectItem;
 import logic.Snake;
+import logic.SnakeManager;
 
 public class ZickZackMovementItem extends MultiplePlayerTimeEffectItem{
 	public static final int ZICK_ZACK_ANGLE_CHANGE = 90;
@@ -15,8 +16,8 @@ public class ZickZackMovementItem extends MultiplePlayerTimeEffectItem{
 	
 	private static final EffectCounter effectCounter = new EffectCounter();
 	
-	public ZickZackMovementItem(int x, int y, ItemEffectMode mode) {
-		super(x, y, mode, "zickzack", EFFECT_TIME);
+	public ZickZackMovementItem(int x, int y, ItemEffectMode mode, SnakeManager snakeManager) {
+		super(x, y, mode, snakeManager, "zickzack", EFFECT_TIME);
 	}
 
 	@Override

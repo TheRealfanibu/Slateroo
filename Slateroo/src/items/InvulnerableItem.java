@@ -4,6 +4,7 @@ import items.manage.EffectCounter;
 import items.manage.ItemEffectMode;
 import items.superClasses.MultiplePlayerTimeEffectItem;
 import logic.Snake;
+import logic.SnakeManager;
 
 public class InvulnerableItem extends MultiplePlayerTimeEffectItem {
 	public static final float INVULNERABLE_VISIBILITY = 0.35f;
@@ -15,8 +16,8 @@ public class InvulnerableItem extends MultiplePlayerTimeEffectItem {
 	
 	private static EffectCounter effectCounter = new EffectCounter();
 
-	public InvulnerableItem(int x, int y, ItemEffectMode mode) {
-		super(x, y, mode, "stern", EFFECT_TIME);
+	public InvulnerableItem(int x, int y, ItemEffectMode mode, SnakeManager snakeManager) {
+		super(x, y, mode, snakeManager, "stern", EFFECT_TIME);
 	}
 
 	@Override

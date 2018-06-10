@@ -10,6 +10,7 @@ import logic.ObjectSequence;
 import logic.Snake;
 
 public class EnvironmentInfo {
+	public static final double INPUT_AMOUNT = 557;
 	private static final double STARVATION_FUNCTION_STRETCH_FACTOR = 30;
 	
 	private ObjectDetector objectDetector;

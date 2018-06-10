@@ -4,6 +4,7 @@ import items.manage.EffectCounter;
 import items.superClasses.TimeEffectItem;
 import logic.Arena;
 import logic.Snake;
+import logic.SnakeManager;
 
 public class TeleportBorderItem extends TimeEffectItem{
 	public static final double AVG_SPAWN_TIME = 10;
@@ -15,19 +16,19 @@ public class TeleportBorderItem extends TimeEffectItem{
 	
 	private static EffectCounter effectCounter = new EffectCounter();
 
-	public TeleportBorderItem(int x, int y) {
-		super(x, y, "teleport", EFFECT_TIME);
+	public TeleportBorderItem(int x, int y, SnakeManager snakeManager) {
+		super(x, y, snakeManager, "teleport", EFFECT_TIME);
 	}
 
 	@Override
 	protected void effect(Snake snake) {
 		arena.setTeleportMode(true);
-		effectCounter.increment();
+		effectCounter.increment(snakeManager);
 	}
 
 	@Override
 	protected void resetEffect(Snake snake) {
-		if(effectCounter.decrement())
+		if(effectCounter.decrement(snakeManager))
 			arena.setTeleportMode(false);
 	}
 	
