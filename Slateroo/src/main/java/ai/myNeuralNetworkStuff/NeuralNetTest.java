@@ -1,14 +1,12 @@
-package ai;
+package ai.myNeuralNetworkStuff;
 
 import java.io.IOException;
-import java.util.Random;
-import java.util.function.UnaryOperator;
 
+import ai.A3C.NeuralNetwork;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utilities.Utils;
 
 public class NeuralNetTest {
 	public static void main(String[] args) {
@@ -48,18 +46,18 @@ public class NeuralNetTest {
         DataSetIterator mnistTrain = null;
         DataSetIterator mnistTest = null;
         try {
-            mnistTrain = new MnistDataSetIterator(128, true, 60000);
-            mnistTest = new MnistDataSetIterator(128, false, 60000);
+            mnistTrain = new MnistDataSetIterator(10, true, 12345);
+            mnistTest = new MnistDataSetIterator(10, false, 12345);
         } catch (IOException e) {
             throw new RuntimeException();
         }
 
-        int epochs = 5;
+        int epochs = 10;
         for(int i = 0; i < epochs; i++) {
-            network.network.fit(mnistTrain);
+            //network.train(mnistTrain);
         }
-        ((Logger) log).info("Evaluate");
-        network.network.evaluate(mnistTest);
-
+        //Evaluation eval = network.evaluate(mnistTest);
+        //System.out.println(eval.stats());
+        //System.out.println(eval.precision());
     }
 }

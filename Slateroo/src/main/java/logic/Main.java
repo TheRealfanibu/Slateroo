@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.Environment;
-import ai.Matrix;
-import ai.MyNeuralNetwork;
+import ai.myNeuralNetworkStuff.Matrix;
+import ai.myNeuralNetworkStuff.MyNeuralNetwork;
 import ai.A3C.AIConstants;
 import utilities.StopWatch;
 

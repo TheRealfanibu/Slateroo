@@ -1,11 +1,14 @@
 package ai.A3C;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Main {
 	
 	public static void main(String[] args) {
 		//Environment testEnv = new Environment(epsStart, epsStop, epsSteps);
 		
-		/*DistributedRandomNumberGenerator generator = new DistributedRandomNumberGenerator();
+		/*RandomDistributedGenerator generator = new RandomDistributedGenerator();
 		int anzNumbers = 1000000;
 		int[] numbers = new int[4];
 		
@@ -23,6 +26,17 @@ public class Main {
 			System.out.println((double)numbers[i]/anzNumbers);
 		}
 		*/
+		RandomDistributedGenerator gen = new RandomDistributedGenerator();
+		double[] probs = {0.05,0.2,0.1,0.4,0.05,0.2};
+		Map<Integer, Integer> count = new HashMap<>();
+		int iters = 100000;
+		for(int i = 0; i < iters; i++) {
+			int rand = gen.getDistributedRandomNumber(probs);
+			count.merge(rand, 1, Integer::sum);
+		}
+		for(int i = 0; i < count.size(); i++) {
+			System.out.println(i +  ": " + (count.get(i) / (double) iters) + " expected: " + probs[i]);
+		}
 	}
 	
 }

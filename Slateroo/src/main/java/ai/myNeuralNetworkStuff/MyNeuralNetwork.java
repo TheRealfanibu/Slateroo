@@ -1,4 +1,4 @@
-package ai;
+package ai.myNeuralNetworkStuff;
 
 import game.Matrix;
 

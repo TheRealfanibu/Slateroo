@@ -2,27 +2,27 @@ package ai.A3C;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
-public class DistributedRandomNumberGenerator {
-	
-	private Map<Integer, Double> distribution;
-    private double distSum;
+public class RandomDistributedGenerator {
+	private static final Random generator = new Random(AIConstants.RANDOM_SEED);
 
-    public DistributedRandomNumberGenerator() {
-        distribution = new HashMap<>();
-    }
-    public int getDistributedRandomNumber(double[] probabilities) {
-    	double rand = Math.random();
+    public static int getDistributedRandomNumber(double[] probabilities) {
+    	double random = generator.nextDouble();
     	double probabilitySum = 0;
     	for(int i = 0; i < probabilities.length; i++) {
     		probabilitySum += probabilities[i];
-    		if(rand <= probabilitySum)
+    		if(random <= probabilitySum)
     			return i;
     	}
     	throw new RuntimeException("Something went wrong, please debug getDistributedRandomNumber()");
     }
     
-    /*public void addNumber(int value, double distribution) {
+    /*
+    private Map<Integer, Double> specificProbs = new HashMap<>();
+    double probabilitySum = 0;
+
+    public void addNumber(int value, double distribution) {
     if (this.distribution.get(value) != null) {
         distSum -= this.distribution.get(value);
     }

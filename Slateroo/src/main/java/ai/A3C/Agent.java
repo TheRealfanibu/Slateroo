@@ -16,7 +16,7 @@ public class Agent {
 	private double eps_Steps;
 	private double r_Agent = 0;
 	private List<Sample> memory;
-	private DistributedRandomNumberGenerator generator = new DistributedRandomNumberGenerator();
+	private RandomDistributedGenerator generator = new RandomDistributedGenerator();
 	
 	public Agent(double eps_Start, double eps_End, double eps_Steps) {
 		this.eps_Start = eps_Start;
@@ -44,15 +44,14 @@ public class Agent {
 		if(random.nextDouble() < eps){
 			return random.nextInt(AIConstants.NUM_ACTIONS-1);
 		}else{
-			double[] probabilities = brain.predict_p(state);
+			double[] probabilities = brain.predict_probabilities(state);
 
 			int a = generator.getDistributedRandomNumber(probabilities);
 			return a;
 		}
 	}
 	
-	public void train(double[] s, int a, double r, double[] s_){
-		
+	public void train(double[] s, int a, double r, double[] s_) {
 		double[] a_cats = new double[memory.size()];
 		a_cats[a] = 1;
 		Sample sample = new Sample(s, a_cats, this.r_Agent, s_);

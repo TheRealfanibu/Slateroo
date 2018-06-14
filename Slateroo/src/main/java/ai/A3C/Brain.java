@@ -2,9 +2,6 @@ package ai.A3C;
 
 import java.util.ArrayList;
 
-import ai.Matrix;
-import ai.NeuralNetwork;
-
 public class Brain {
 	
 	private NeuralNetwork network;
@@ -15,7 +12,7 @@ public class Brain {
 	private ArrayList<Double[]> trainQueue_S_Mask;
 	
 	public Brain(){
-		network = new NeuralNetwork(AIConstants.LAYER_STRUCTURE, AIConstants.ACTIVATION_FUNCTIONS, AIConstants.LEARNING_RATE);
+		network = new NeuralNetwork();
 	}
 	
 	public void optimize(){
@@ -30,18 +27,13 @@ public class Brain {
 		
 	}
 	
-	/*public double[] predict(double[] s){
-		return network.predict(s);
-	}*/
-	
-	public double predict_p(double[] s){
+	public double[] predict_probabilities(double[] s) {
+		return null;
 	}
-	
-	/*public double predict_v(double[] s){
-		double[] pv_array = network.predict(s).getColumn(0);
-		double v = pv_array[1];
-		
-		return v ;
-	}*/ 
+
+	public double predict_value(double[] s) {
+		return 0;
+	}
+
 	
 }

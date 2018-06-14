@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Utilities">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/Utilities/bin" />
+      <root url="file://$PROJECT_DIR$/../Utilities/bin" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="file://$PROJECT_DIR$/Utilities/src" />
+      <root url="file://$PROJECT_DIR$/../Utilities/src" />
     </SOURCES>
   </library>
 </component>

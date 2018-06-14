@@ -14,6 +14,7 @@ import logic.Snake;
 import logic.SnakeManager;
 import render.GamePanel;
 import utilities.Utils;
+import game.FPSCounter;
 
 public class Environment extends Thread{
 	public static final int FPS = 140;
