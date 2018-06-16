@@ -2,33 +2,47 @@ package ai.A3C;
 
 public class Sample {
 	
-	private double[] s;
-	private double[] onehot_a;
-	private double r;
-	private double[] s_;
+	private double[] state;
+	private int action;
+	private double[] onehotAction;
+	private double reward;
+	private double[] nextState;
+	private boolean terminateState;
 	
-	public Sample(double[] s, double[] a_cats, double r, double[] s_) {
-		this.s = s;
-		this.onehot_a = a_cats;
-		this.r = r;
-		this.s_ = s_;
+	public Sample(double[] state, int action, double reward, double[] nextState) {
+		this.state = state;
+		this.action = action;
+		this.reward = reward;
+		this.nextState = nextState;
+
+		onehotAction = new double[AIConstants.NUM_ACTIONS]; // every entry is 0 except the index of the action is 1
+		onehotAction[action] = 1;
+
+		terminateState = nextState == null;
+
 	}
 
-	public double[] getS(){
-		return s;
+	public double[] getState() {
+		return state;
 	}
-	
-	public double[] getOnehot_A(){
-		return onehot_a;
-	}
-	
-	public double getR(){
 
-		return r;
+	public int getAction() {
+		return action;
 	}
-	
-	public double[] getS_(){
-		return s_;
+
+	public double[] getOnehotAction() {
+		return onehotAction;
 	}
-	
+
+	public double getReward() {
+		return reward;
+	}
+
+	public double[] getNextState() {
+		return nextState;
+	}
+
+	public boolean isTerminateState() {
+		return terminateState;
+	}
 }

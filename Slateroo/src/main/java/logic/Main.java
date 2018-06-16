@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.Environment;
-import ai.myNeuralNetworkStuff.Matrix;
 import ai.myNeuralNetworkStuff.MyNeuralNetwork;
 import ai.A3C.AIConstants;
 import utilities.StopWatch;
@@ -86,12 +85,6 @@ public class Main {
 		train(network, trainFeatures, trainLabels, episodes);
 		test(network, testFeatures, testLabels);*/
 		//new Main();
-		Matrix m1 = new Matrix(1000, 1000);
-		Matrix m2 = new Matrix(1000,1000);
-		
-		long start = System.currentTimeMillis();
-		Matrix m3 = Matrix.multiply(m1, m2);
-		System.out.println((System.currentTimeMillis() - start) / 1000d);
 	}
 	
 	public static void train(MyNeuralNetwork network, double[][] trainFeatures, double[][] trainLabels, int episodes) {

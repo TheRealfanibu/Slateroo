@@ -76,13 +76,11 @@ public class Arena {
 	 * @param head The head of the snake that needs to be checked
 	 * @return true, if the snake collides with the border, false otherwise
 	 */
-	public boolean isSnakeCollidingWithBorder(HeadTile head) {	
-		if(head.getXMinusRadius() <= 0 || // left
+	public boolean isSnakeCollidingWithBorder(HeadTile head) {
+		return head.getXMinusRadius() <= 0 || // left
 				head.getXPlusRadius() >= RIGHT_BORDER_HITBOX_X - BORDER_HITBOX || // right
 				head.getYMinusRadius() <= 0 || // up
-				head.getYPlusRadius() >= LOWER_BORDER_HITBOX_Y - BORDER_HITBOX) // down
-			return true;
-		return false;
+				head.getYPlusRadius() >= LOWER_BORDER_HITBOX_Y - BORDER_HITBOX;
 	}
 
 	/**

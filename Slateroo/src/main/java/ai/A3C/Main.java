@@ -31,7 +31,7 @@ public class Main {
 		Map<Integer, Integer> count = new HashMap<>();
 		int iters = 100000;
 		for(int i = 0; i < iters; i++) {
-			int rand = gen.getDistributedRandomNumber(probs);
+			int rand = RandomDistributedGenerator.getDistributedRandomNumber(probs);
 			count.merge(rand, 1, Integer::sum);
 		}
 		for(int i = 0; i < count.size(); i++) {

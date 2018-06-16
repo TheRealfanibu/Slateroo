@@ -78,7 +78,7 @@ public class Environment extends Thread{
 				Direction[] actions = calcSnakeActions(states);
 				gameStep(actions);
 				double[][] nextStates = calcEnvironmentStates();
-				int[] actionIndices = Arrays.stream(actions).mapToInt(action -> action.ordinal()).toArray();
+				int[] actionIndices = Arrays.stream(actions).mapToInt(Direction::ordinal).toArray();
 				double[] rewards = getRewardsFromSnakes();
 				
 				for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {

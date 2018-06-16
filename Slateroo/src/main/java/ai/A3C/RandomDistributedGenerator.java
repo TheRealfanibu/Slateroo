@@ -19,15 +19,15 @@ public class RandomDistributedGenerator {
     }
     
     /*
-    private Map<Integer, Double> specificProbs = new HashMap<>();
+    private Map<Integer, Double> numberProbs = new HashMap<>();
     double probabilitySum = 0;
 
     public void addNumber(int value, double distribution) {
-    if (this.distribution.get(value) != null) {
-        distSum -= this.distribution.get(value);
+    if (this.numberProbs.get(value) != null) {
+        distSum -= this.numberProbs.get(value);
     }
-    this.distribution.put(value, distribution);
-    distSum += distribution;
+    this.numberProbs.put(value, distribution);
+    probabilitySum += distribution;
 }
 
 public int getDistributedChosenNumber() {
@@ -35,7 +35,7 @@ public int getDistributedChosenNumber() {
     double tempDist = 0;
     for (Integer i : distribution.keySet()) {
         tempDist += distribution.get(i);
-        if (rand * distSum <= tempDist) {
+        if (rand * probabilitySum <= tempDist) {
             return i;
         }
     }

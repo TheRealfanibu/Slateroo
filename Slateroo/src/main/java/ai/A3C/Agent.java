@@ -5,35 +5,25 @@ import java.util.List;
 import java.util.Random;
 
 public class Agent {
-	Random random = new Random();
-	Brain brain = new Brain();
-	
-	
-	public int frames = 0;
-	
-	private double eps_Start;
-	private double eps_End;
-	private double eps_Steps;
-	private double r_Agent = 0;
+	private Random random = new Random();
+	private Brain brain = new Brain();
+
+	private int frames = 0;
+
+	private double nStepReward = 0;
 	private List<Sample> memory;
 	private RandomDistributedGenerator generator = new RandomDistributedGenerator();
 	
-	public Agent(double eps_Start, double eps_End, double eps_Steps) {
-		this.eps_Start = eps_Start;
-		this.eps_End = eps_End;
-		this.eps_Steps = eps_Steps;
+	public Agent() {
 		memory = new ArrayList<>();
 	}
 
-	public Agent(){
-		
-	}
 
-	public double getEpsilon(){
-		if(frames >=  this.eps_Steps){
-			return this.eps_End;
+	private double getEpsilon(){
+		if(frames >=  AIConstants.EPS_STEPS){
+			return AIConstants.EPS_STOP;
 		}else{
-			return eps_Start + frames * (eps_End - eps_Start) / eps_Steps;
+			return AIConstants.EPS_START + frames * (AIConstants.EPS_STOP - AIConstants.EPS_START) / AIConstants.EPS_STEPS;
 		}
 	}
 	
@@ -46,45 +36,42 @@ public class Agent {
 		}else{
 			double[] probabilities = brain.predict_probabilities(state);
 
-			int a = generator.getDistributedRandomNumber(probabilities);
-			return a;
+			return RandomDistributedGenerator.getDistributedRandomNumber(probabilities);
 		}
 	}
 	
-	public void train(double[] s, int a, double r, double[] s_) {
-		double[] a_cats = new double[memory.size()];
-		a_cats[a] = 1;
-		Sample sample = new Sample(s, a_cats, this.r_Agent, s_);
+	public void train(double[] state, int action, double reward, double[] nextState) {
+		Sample sample = new Sample(state, action, reward, nextState);
 		memory.add(sample);
 		
-		this.r_Agent = (this.r_Agent + r*AIConstants.GAMMA_N) / AIConstants.GAMMA;
+		this.nStepReward = (this.nStepReward + reward *AIConstants.GAMMA_N) / AIConstants.GAMMA;
 		
-		if(s_ == null){
-			while(memory.size() > 0){
-				int n = memory.size();
-				double[][] samples = this.getSample(n);
-				brain.trainPush(samples);
+		if(sample.isTerminateState()){
+			while(!memory.isEmpty()){
+				int nStep = memory.size();
+				Sample trainSample = this.calcTrainingSample(nStep);
+				brain.trainPush(trainSample);
+
 				Sample sample_0 = this.memory.get(0);
-				this.r_Agent = (this.r_Agent - sample_0.getR()) / AIConstants.GAMMA;
+				this.nStepReward = (this.nStepReward - sample_0.getReward()) / AIConstants.GAMMA;
 				this.memory.remove(0);
 			}
-			this.r_Agent = 0;
+			this.nStepReward = 0;
 		}
 		
-		if(memory.size() >= AIConstants.N_STEP_RETURN){
-			double[][] samples = this.getSample(AIConstants.N_STEP_RETURN);
-			brain.trainPush(samples);
+		else if(memory.size() >= AIConstants.N_STEP_RETURN){
+			Sample trainSample = this.calcTrainingSample(AIConstants.N_STEP_RETURN);
+			brain.trainPush(trainSample);
 			Sample sample_0 = this.memory.get(0);
-			this.r_Agent = (this.r_Agent - sample_0.getR()) / AIConstants.GAMMA;
+			this.nStepReward = (this.nStepReward - sample_0.getReward()) / AIConstants.GAMMA;
 		}
 		
 	}
 	
-	private double[][] getSample(int n){
+	private Sample calcTrainingSample(int nStep){
 		Sample sample_0 = memory.get(0);
-		Sample sample_N = memory.get(n-1);
-		double[][] sample = {sample_0.getS(), sample_0.getOnehot_A(), {this.r_Agent}, sample_N.getS_()}; 
-		return sample;
+		Sample sample_N = memory.get(nStep-1);
+		return new Sample(sample_0.getState(), sample_0.getAction(), nStepReward, sample_N.getNextState());
 	}
 	
 }

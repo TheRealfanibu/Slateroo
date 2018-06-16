@@ -1,22 +1,18 @@
 package ai.A3C;
 
-import ai.A3C.AIConstants;
-import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.gradientcheck.GradientCheckUtil;
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.rl4j.network.ac.ActorCriticFactoryCompGraphStdDense;
+import org.deeplearning4j.rl4j.network.ac.ActorCriticLoss;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.dataset.MultiDataSet;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.factory.Nd4jBackend;
-import org.nd4j.linalg.learning.config.NoOp;
 import org.nd4j.linalg.learning.config.RmsProp;
-import org.nd4j.linalg.lossfunctions.ILossFunction;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 public class NeuralNetwork {
@@ -29,8 +25,6 @@ public class NeuralNetwork {
     private void a3cBuild() {
         int layer1Neurons = 16;
 
-        ILossFunction lossFn = new A3CLoss();
-
         ComputationGraphConfiguration config = new NeuralNetConfiguration.Builder()
                 .seed(AIConstants.RANDOM_SEED)
                 .updater(new RmsProp(AIConstants.LEARNING_RATE, AIConstants.RMS_PROP_DECAY,
@@ -42,17 +36,18 @@ public class NeuralNetwork {
                                 .nIn(AIConstants.NUM_STATES)
                                 .nOut(layer1Neurons) //bit less?
                                 .build(), "Layer1")
-                .addLayer("PolicyOutput", new OutputLayer.Builder()
-                                .lossFunction(lossFn)// to do
+                .addLayer("Value", new OutputLayer.Builder()
+                        .lossFunction(new ActorCriticLoss())
+                        .activation(Activation.IDENTITY)
+                        .nIn(layer1Neurons)
+                        .nOut(1).build(), "Layer1")
+                .addLayer("Policy", new OutputLayer.Builder()
+                                .lossFunction(LossFunctions.LossFunction.MSE)
                                 .activation(Activation.SOFTMAX)
                                 .nIn(layer1Neurons)
                                 .nOut(AIConstants.NUM_ACTIONS).build(), "Layer1")
-                .addLayer("ValueOutput", new OutputLayer.Builder()
-                                .lossFunction(lossFn)
-                                .activation(Activation.IDENTITY)
-                                .nIn(layer1Neurons)
-                                .nOut(1).build(), "Layer1")
-                .setOutputs("PolicyOutput", "ValueOutput")
+
+                .setOutputs("Value", "Policy")
                 .build();
 
         network = new ComputationGraph(config);
@@ -61,7 +56,7 @@ public class NeuralNetwork {
     }
 
     public INDArray[] predict(double[] states) {
-        return network.output(Nd4j.create(states));
+        network.out
     }
 
     public void fit() {

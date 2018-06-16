@@ -1,32 +1,20 @@
 package logic;
 
-import java.awt.AlphaComposite;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
-
 import ai.Environment;
 import gui.Frame;
 import io.Direction;
 import io.Steering;
-import items.HeadToTailItem;
-import items.InvulnerableItem;
-import items.ReverseSteeringItem;
-import items.SlowItem;
-import items.SlowSteerItem;
-import items.SpeedItem;
-import items.ZickZackMovementItem;
+import items.*;
 import items.manage.TimeEffect;
 import items.superClasses.Item;
 import utilities.Utils;
+
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a snake consisting of multiple {@link SnakeTile}s
@@ -418,7 +406,7 @@ public class Snake {
 	 * This method is executed when collecting a {@link ReverseSteeringItem}
 	 */
 	public void reverseSteering() {
-		reverseSteering = reverseSteering ? false : true;
+		reverseSteering = !reverseSteering;
 	}
 	
 	/**
