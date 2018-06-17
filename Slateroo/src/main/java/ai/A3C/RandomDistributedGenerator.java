@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class RandomDistributedGenerator {
-	private static final Random generator = new Random(AIConstants.RANDOM_SEED);
+	private static final Random generator = new Random();
 
     public static int getDistributedRandomNumber(double[] probabilities) {
     	double random = generator.nextDouble();

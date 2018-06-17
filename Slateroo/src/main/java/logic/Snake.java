@@ -51,16 +51,11 @@ public class Snake {
 	 * The amount of how many {@link Snake} objects have been instanciated
 	 */
 	private static final double COLLIDE_REWARD = -1;
-	
-	private static int instances = 0;
+
 	/**
 	 * Reference to the {@link Arena} instance
 	 */
 	private Arena arena;
-	/**
-	 * Responsible for choosing the direction of the move each frame
-	 */
-	private Steering steerManager;
 	/**
 	 * Indicates whether this snake is steered by an AI
 	 */
@@ -98,6 +93,8 @@ public class Snake {
 	 * This variable is needed when the snake dies and fades out.
 	 */
 	private float visibility = 1;
+
+	private int position;
 	/**
 	 * Indicates whether this snake is currently affected by an {@link ReverseSteeringItem}
 	 */
@@ -121,18 +118,19 @@ public class Snake {
 	 * Creates a snake instance
 	 * @param steer The {@link Steering} instance this snake is going to be steered by
 	 */
-	public Snake(boolean steeredByAI) {
-		tilesLock = new ReentrantReadWriteLock(true);
+	public Snake(boolean steeredByAI, Arena arena, int position) {
 		this.steeredByAI = steeredByAI;
+		this.arena = arena;
+		this.position = position;
+
+		tilesLock = new ReentrantReadWriteLock(true);
 		if(steeredByAI)
 			timeEffects = new ArrayList<>();
 		
 		chooseColor();
 		initTiles();
 		initStarvation();
-	
-		instances++;
-		instances %= 4;
+
 	}
 	
 	/**
@@ -349,8 +347,8 @@ public class Snake {
 		tiles = new ArrayList<>();
 		
 		final int gapToBorderX = 30, gapToBorderY = 200; 
-		boolean onTheRight = instances < 3; // location: 1 = upper right; 2 = lower right; 3 = upper left; 4 = lower left
-		boolean onTheTop = instances % 2 == 1;
+		boolean onTheRight = position < 2; // location: 0 = upper right; 1 = lower right; 2 = upper left; 3 = lower left
+		boolean onTheTop = position % 2 == 0;
 		
 		int headX, headY;
 		if(onTheRight)
@@ -433,7 +431,7 @@ public class Snake {
 	 */
 	private void chooseColor() {
 		Color[] colors = {new Color(0,255,127), new Color(250,128,114), new Color(176,224,230), new Color(240,230,140)};
-		color = colors[instances];
+		color = colors[position];
 	}
 	/**
 	 * Changes the movement speed of this snake.

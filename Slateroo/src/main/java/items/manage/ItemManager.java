@@ -4,6 +4,7 @@ import static items.superClasses.Item.LENGTH;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,19 +18,21 @@ public class ItemManager {
 	private static final int MAX_ITEM_AMOUNT = 10;
 	
 	private SnakeManager snakeManager;
-
 	
 	private List<Item> items;
+	private List<ItemSpawner> itemSpawners;
 	
 	public ItemManager(SnakeManager snakeManager) {
 		this.snakeManager = snakeManager;
 		items = new CopyOnWriteArrayList<>(); // rendering happens on different thread -> removing items could lead to ConcurrentModificationException
 											  // thats why we are using a thread-safe list
+		createItemSpawners();
 	}
 	
 	private void createItemSpawners() {
+		itemSpawners = new ArrayList<>();
 		for(Class<?> itemClass : ObjectSequence.getItemClasses()) // create Item Spawners
-			new ItemSpawner(this, snakeManager, itemClass);
+			itemSpawners.add(new ItemSpawner(this, snakeManager, itemClass));
 	}
 	
 	/**
@@ -62,7 +65,7 @@ public class ItemManager {
 	}
 	
 	public void removeActivatedItems() {
-		items.removeIf(item -> item.isEffectActivated());
+		items.removeIf(Item::isEffectActivated);
 	}
 	
 	public List<Item> getItems() {

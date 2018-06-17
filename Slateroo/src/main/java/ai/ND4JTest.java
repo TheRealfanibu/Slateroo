@@ -25,10 +25,7 @@ public class ND4JTest {
         INDArray x = Nd4j.create(a);
         INDArray y = Nd4j.create(b);
 
-        Queue<Integer> q = new LinkedList<>();
-        q.add(1);
-        q.add(2);
-        q.add(3);
-        System.out.println(q.remove());
+        double[] c = {1d,1d,1d};
+        System.out.println();
     }
 }

@@ -2,9 +2,17 @@ package ai.myNeuralNetworkStuff;
 
 import java.io.IOException;
 
+import ai.A3C.AIConstants;
 import ai.A3C.NeuralNetwork;
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator;
+import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
+import org.nd4j.linalg.factory.Nd4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,24 +48,28 @@ public class NeuralNetTest {
 		Matrix A = Z.applyToEveryElement(sigmoid);
 		System.out.println("A " + A);
 		System.out.println(weights + " " + bias);*/
-		Logger log = LoggerFactory.getLogger(NeuralNetTest.class);
+        ComputationGraphConfiguration conf = new NeuralNetConfiguration.Builder()
+                .seed(AIConstants.RANDOM_SEED)
+                .graphBuilder()
+                .addInputs("input")
+                .addLayer("out1", new OutputLayer.Builder()
+                            .activation(Activation.SOFTMAX)
+                            .nIn(3)
+                            .nOut(3)
+                            .build(), "input")
+                .addLayer("out2", new OutputLayer.Builder()
+                            .activation(Activation.IDENTITY)
+                            .nIn(3)
+                            .nOut(1)
+                            .build(), "input")
+                .setOutputs("out1", "out2")
+                .build();
 
-		NeuralNetwork network = new NeuralNetwork();
-        DataSetIterator mnistTrain = null;
-        DataSetIterator mnistTest = null;
-        try {
-            mnistTrain = new MnistDataSetIterator(10, true, 12345);
-            mnistTest = new MnistDataSetIterator(10, false, 12345);
-        } catch (IOException e) {
-            throw new RuntimeException();
-        }
+        ComputationGraph network = new ComputationGraph(conf);
+        network.init();
 
-        int epochs = 10;
-        for(int i = 0; i < epochs; i++) {
-            //network.train(mnistTrain);
-        }
-        //Evaluation eval = network.evaluate(mnistTest);
-        //System.out.println(eval.stats());
-        //System.out.println(eval.precision());
+        double[][] trainData = {{1d,2d,3d}, {4d,5d,6d}};
+        INDArray[] output = network.output(Nd4j.create(trainData));
+        System.out.println(output[0]);
     }
 }

@@ -19,7 +19,6 @@ public class Brain {
 	}
 	
 	public void optimize(){
-	    INDArray ndStates, ndOnehotActions, ndRewards, ndNextStates, ndTerminalMask;
 	    double[][] states, nextStates, onehotActions;
 	    double[] rewards, terminalMask;
 		synchronized (this) {
@@ -43,27 +42,33 @@ public class Brain {
             }
         }
 
-        ndStates = Nd4j.create(states).transpose();
-		ndNextStates = Nd4j.create(nextStates).transpose();
-		ndOnehotActions = Nd4j.create(onehotActions).transpose();
-		ndRewards = Nd4j.create(rewards).transpose();
-		ndTerminalMask = Nd4j.create(terminalMask).transpose();
+		INDArray ndRewards = Nd4j.create(rewards).transpose();
+		INDArray ndTerminalMask = Nd4j.create(terminalMask).transpose();
 
+		System.out.println("Optimize " + states.length + " Samples = " + (states.length / AIConstants.MIN_BATCH) + " times the minibatch");
 
+		INDArray ndValues = predict_values(nextStates);
+		INDArray rewardPrediction = ndValues.mul(AIConstants.GAMMA_N).mul(ndTerminalMask);
+		INDArray expectedReward = ndRewards.add(rewardPrediction);
+
+		network.fit(states, onehotActions, expectedReward);
 	}
 	
 	public void trainPush(Sample sample){
-		
+		trainQueue.add(sample);
 	}
 	
 	public double[] predict_probabilities(double[] state) {
         INDArray[] output = network.predict(state);
-        return output[1].toDoubleVector();
+          return output[0].toDoubleVector();
 	}
 
-	public INDArray predict_values (INDArray states) {
-        INDArray[] output = network.predict(state);
-        MultiDataSet set = new MultiDataSet();
-        return output[0].toDoubleVector()[0];
+	public INDArray predict_values (double[][] states) {
+        INDArray[] output = network.predict(states);
+        return output[1];
+    }
+
+    public void save() {
+	    network.save();
     }
 }

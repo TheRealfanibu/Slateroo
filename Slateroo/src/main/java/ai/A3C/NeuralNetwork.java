@@ -15,6 +15,9 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.RmsProp;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import java.io.File;
+import java.io.IOException;
+
 public class NeuralNetwork {
     private ComputationGraph network;
 
@@ -23,7 +26,8 @@ public class NeuralNetwork {
     }
 
     private void a3cBuild() {
-        int layer1Neurons = 16;
+        int hidden1Neurons = 64;
+        int hidden2Neurons = 16;
 
         ComputationGraphConfiguration config = new NeuralNetConfiguration.Builder()
                 .seed(AIConstants.RANDOM_SEED)
@@ -31,23 +35,29 @@ public class NeuralNetwork {
                         RmsProp.DEFAULT_RMSPROP_EPSILON))
                 .graphBuilder()
                 .addInputs("input")
-                .addLayer("Layer1", new DenseLayer.Builder()
+                .addLayer("Hidden1", new DenseLayer.Builder()
                                 .activation(Activation.RELU)
                                 .nIn(AIConstants.NUM_STATES)
-                                .nOut(layer1Neurons) //bit less?
-                                .build(), "Layer1")
-                .addLayer("Value", new OutputLayer.Builder()
-                        .lossFunction(new ActorCriticLoss())
-                        .activation(Activation.IDENTITY)
-                        .nIn(layer1Neurons)
-                        .nOut(1).build(), "Layer1")
+                                .nOut(hidden1Neurons)
+                                .build(), "input")
+                .addLayer("Hidden2", new DenseLayer.Builder()
+                        .activation(Activation.RELU)
+                        .nIn(hidden1Neurons)
+                        .nOut(hidden2Neurons)
+                        .build(), "Hidden1")
                 .addLayer("Policy", new OutputLayer.Builder()
-                                .lossFunction(LossFunctions.LossFunction.MSE)
-                                .activation(Activation.SOFTMAX)
-                                .nIn(layer1Neurons)
-                                .nOut(AIConstants.NUM_ACTIONS).build(), "Layer1")
+                        .lossFunction(new ActorCriticLoss())
+                        .activation(Activation.SOFTMAX)
+                        .nIn(hidden2Neurons)
+                        .nOut(AIConstants.NUM_ACTIONS).build(), "Hidden2")
+                .addLayer("Value", new OutputLayer.Builder()
+                        .lossFunction(LossFunctions.LossFunction.MSE)
+                        .activation(Activation.IDENTITY)
+                        .nIn(hidden2Neurons)
+                        .nOut(1).build(), "Hidden2")
 
-                .setOutputs("Value", "Policy")
+
+                .setOutputs("Policy", "Value")
                 .build();
 
         network = new ComputationGraph(config);
@@ -55,12 +65,28 @@ public class NeuralNetwork {
         network.setListeners(new ScoreIterationListener(10));
     }
 
-    public INDArray[] predict(double[] states) {
-        network.out
+    public INDArray[] predict(double[][] states) {
+        INDArray ndStates = Nd4j.create(states);
+        return network.output(ndStates);
     }
 
-    public void fit() {
+    public INDArray[] predict(double[] state) {
+        INDArray ndState = Nd4j.create(state);
+        return network.output(ndState);
+    }
 
+    public void fit(double[][] states, double[][] onehotActionLabels, INDArray valueLabels) {
+        INDArray[] inputs = {Nd4j.create(states)};
+        INDArray[] labels = {Nd4j.create(onehotActionLabels), valueLabels};
+        network.fit(inputs, labels);
+    }
+
+    public void save() {
+        try {
+            network.save(new File(System.getProperty("user.dir") + "src/main/resources/ai/Slateroo-model.zip"));
+        } catch (IOException e) {
+            throw new RuntimeException("Save model failed: " + e);
+        }
     }
 
     /*private void mnistBuild() {

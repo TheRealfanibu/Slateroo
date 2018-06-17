@@ -101,7 +101,7 @@ public abstract class Item implements GameObject{
 	 */
 	private BufferedImage loadIcon(String iconName) {
 		try {
-			return ImageIO.read(new File("res/items/" + iconName + ".png"));
+			return ImageIO.read(new File(System.getProperty("user.dir") + "/src/main/resources/items/" + iconName + ".png"));
 		} catch (IOException e) {
 			throw new RuntimeException("Could not find the icon called: " + iconName);
 		}

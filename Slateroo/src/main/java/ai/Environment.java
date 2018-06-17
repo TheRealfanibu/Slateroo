@@ -1,10 +1,12 @@
 package ai;
 
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.List;
 
 import ai.A3C.Agent;
 import ai.A3C.AIConstants;
+import ai.A3C.Brain;
 import gui.Frame;
 import io.Direction;
 import io.KeyboardSteering;
@@ -21,46 +23,42 @@ public class Environment extends Thread{
 	private static final int SLEEP_TIME = (int) Math.round(1000d / FPS);
 	
 	private static final int SNAKE_AMOUNT = 4;
-	private static final int PLAYER_AMOUNT = 1;
+	private static final int PLAYER_AMOUNT = 4;
 	
 	private SnakeManager snakeManager;
 	private ItemManager itemManager;
 	
 	private KeyboardSteering keyListener;
-	private Frame frame;
 	private GamePanel gamePanel;
-	private Arena arena;
+	private Frame frame;
 	
 	private Agent agent;
 	private EnvironmentInfo envInfo;
-	private ObjectDetector objectDetector;
 	
 	private boolean trainAI;
-	
-	public Environment(boolean aiTraining) {
-		this.trainAI = aiTraining;
-		reset();
-		start();
-	}
+
+	public Environment(Brain brain, boolean trainAI) {
+	    this.trainAI = trainAI;
+        agent = new Agent(brain);
+	    start();
+    }
 	
 	/**
 	 * Creates instances of the classes, which only have to exist once.
 	 * It also handles the access between each other
 	 */
 	private void reset() {
-		arena = new Arena();
+		Arena arena = new Arena();
 		snakeManager = new SnakeManager(SNAKE_AMOUNT, trainAI ? 0 : PLAYER_AMOUNT, arena);
 		itemManager = new ItemManager(snakeManager);
-		if(trainAI) {
-			//agent = new Agent();
-			objectDetector = new ObjectDetector(snakeManager, itemManager);
-			envInfo = new EnvironmentInfo(objectDetector);
-		} else {
-			keyListener = new KeyboardSteering();
-			gamePanel = new GamePanel(snakeManager, itemManager, arena);
-			frame = new Frame(gamePanel);
-			frame.addKeyListener(keyListener);
-		}
+        ObjectDetector objectDetector = new ObjectDetector(snakeManager, itemManager);
+        envInfo = new EnvironmentInfo(objectDetector);
+        if(!trainAI) {
+            keyListener = new KeyboardSteering();
+            gamePanel = new GamePanel(snakeManager, itemManager, arena);
+            frame = new Frame(gamePanel);
+            frame.addKeyListener(keyListener);
+        }
 	}
 	
 	public void run() {
@@ -73,28 +71,35 @@ public class Environment extends Thread{
 	private void trainAI() {
 		while(!isInterrupted()) {
 			double totalReward = 0;
+			reset();
 			double[][] states = calcEnvironmentStates();
 			while(true) {
+			   // gamePanel.repaint();
+
 				Direction[] actions = calcSnakeActions(states);
+                int[] actionIndices = Arrays.stream(actions).mapToInt(Direction::ordinal).toArray();
 				gameStep(actions);
 				double[][] nextStates = calcEnvironmentStates();
-				int[] actionIndices = Arrays.stream(actions).mapToInt(Direction::ordinal).toArray();
 				double[] rewards = getRewardsFromSnakes();
 				
 				for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 					double[] state = states[i];
-					int actionIndex = actionIndices[i];
-					double reward = rewards[i];
-					totalReward += reward;
-					double[] nextState = nextStates[i];
-					agent.train(state, actionIndex, reward, nextState);
+					if(state != null) {
+                        int actionIndex = actionIndices[i];
+                        double reward = rewards[i];
+                        totalReward += reward;
+                        double[] nextState = nextStates[i];
+                        agent.train(state, actionIndex, reward, nextState);
+                    }
 				}
 				
-				if(!snakeManager.isGameRunning())
+				if(snakeManager.isEverySnakeCollided())
 					break;
 				
 				states = nextStates;
 			}
+			//frame.setVisible(false);
+			//frame.dispose();
 			System.out.println("Total Reward: " + totalReward);
 		}
 	}
@@ -109,17 +114,14 @@ public class Environment extends Thread{
 	}
 	
 	private double[][] calcEnvironmentStates() {
-		double[][] states = new double[snakeManager.getSnakeAmount()][AIConstants.TRAIN_ENVS];
+		double[][] states = new double[snakeManager.getSnakeAmount()][AIConstants.NUM_STATES];
 		List<Snake> snakes = snakeManager.getSnakes();
 		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 			Snake snake = snakes.get(i);
-			if(snake.isSteeredByAI() && !snake.isCollided()) {
-				if(snakeManager.isGameRunning())
-					states[i] = envInfo.calcAIInputs(snake);
-				else
-					states[i] = null;
-			}
-				
+			if(snake.isSteeredByAI() && !snake.isCollided())
+			    states[i] = envInfo.calcAIInputs(snake);
+			else
+			    states[i] = null;
 		}
 		return states;
 	}
@@ -130,11 +132,12 @@ public class Environment extends Thread{
 		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 			Snake snake = snakes.get(i);
 			if(snake.isCollided())
-				continue;
-			if(snakes.get(i).isSteeredByAI())
-				actions[i] = Direction.ofIndex(agent.act(envStates[i]));
-			else
+				actions[i] = Direction.LEFT; // default value such that it can be processed by the stream, but not needed anyways
+			else if (snake.isSteeredByAI()) {
+				actions[i] = Direction.ofIndex(agent.act(envStates[i], trainAI));
+			} else {
 				actions[i] = keyListener.getMoveDirection();
+			}
 		}
 		return actions;
 	}
@@ -142,6 +145,7 @@ public class Environment extends Thread{
 	private void gameStep(Direction[] snakeActions) {
 		snakeManager.takeActionForEachSnake(snakeActions);
 		snakeManager.removeObsoleteSnakes();
+		snakeManager.checkSnakeBorderCollision();
 		snakeManager.checkSnakeCrashes();
 		itemManager.checkSnakeItemIntersections();
 		itemManager.removeActivatedItems();
@@ -151,6 +155,7 @@ public class Environment extends Thread{
 	 * This method contains a loop running all the time during the game and controlling the actions which happen in the game
 	 */
 	private void playUserGame() {
+	    reset();
 		FPSCounter fps = new FPSCounter("main", 5);
 		while(snakeManager.isGameRunning()) {
 			fps.count();

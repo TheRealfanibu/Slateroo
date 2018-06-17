@@ -17,7 +17,7 @@ public class EffectCounter {
 	}
 	
 	public boolean decrement(SnakeManager manager) {
-		int newCount = effectCount.computeIfPresent(manager, (mng, count) -> count - 1);
+		int newCount = effectCount.computeIfPresent(manager, (SnakeManager mng, Integer count) -> count - 1);
 		return newCount == 0;
 	}
 	
@@ -26,7 +26,7 @@ public class EffectCounter {
 	}
 
 	public boolean decrement(Snake snake) {
-		int newCount = snakeEffectCount.computeIfPresent(snake, (snk, val) -> val - 1);
+		int newCount = snakeEffectCount.computeIfPresent(snake, (Snake snk, Integer val) -> val - 1);
 		return newCount == 0;
 	}
 }

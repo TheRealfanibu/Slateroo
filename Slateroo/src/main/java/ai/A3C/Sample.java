@@ -13,12 +13,12 @@ public class Sample {
 		this.state = state;
 		this.action = action;
 		this.reward = reward;
-		this.nextState = nextState;
 
 		onehotAction = new double[AIConstants.NUM_ACTIONS]; // every entry is 0 except the index of the action is 1
 		onehotAction[action] = 1;
 
 		terminateState = nextState == null;
+		this.nextState = terminateState ? AIConstants.NONE_STATE : nextState;
 
 	}
 

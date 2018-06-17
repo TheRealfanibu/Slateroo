@@ -3,6 +3,8 @@ package logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import ai.A3C.Brain;
+import ai.A3C.Optimizer;
 import ai.Environment;
 import ai.myNeuralNetworkStuff.MyNeuralNetwork;
 import ai.A3C.AIConstants;
@@ -17,14 +19,20 @@ public class Main {
 	private boolean trainAI = true;
 	
 	private List<Environment> environments = new ArrayList<>();
+	private List<Optimizer> optimizers = new ArrayList<>();
+
+	private Brain brain;
 	
 	/**
 	 * The constructor which has to be called first in the program.
 	 * It creates the application
 	 */
 	public Main() {
-		if(trainAI)
+		brain = new Brain();
+		if(trainAI) {
 			createTrainingEnvironments();
+			createOptimizerThreads();
+		}
 		else
 			createUserEnvironment();
 		
@@ -33,24 +41,23 @@ public class Main {
 	
 	private void createTrainingEnvironments() {
 		for(int i = 0; i < AIConstants.TRAIN_ENVS; i++) {
-			environments.add(new Environment(true));
+			environments.add(new Environment(brain, true));
+		}
+	}
+
+	private void createOptimizerThreads() {
+		for(int i = 0; i < AIConstants.OPTIMIZERS; i++) {
+			optimizers.add(new Optimizer(brain));
 		}
 	}
 	
 	private void createUserEnvironment() {
-		environments.add(new Environment(false));
+		environments.add(new Environment(brain, false));
 	}
 	
 	private void addOnDestroy() {
 		Runnable shutdownHook = () -> {
-			for(Environment env : environments) {
-				env.interrupt();
-				try {
-					env.join();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+			brain.save();
 		};
 		Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook));
 	}
@@ -84,7 +91,7 @@ public class Main {
 		int episodes = 3;
 		train(network, trainFeatures, trainLabels, episodes);
 		test(network, testFeatures, testLabels);*/
-		//new Main();
+		new Main();
 	}
 	
 	public static void train(MyNeuralNetwork network, double[][] trainFeatures, double[][] trainLabels, int episodes) {

@@ -5,17 +5,18 @@ import java.util.List;
 import java.util.Random;
 
 public class Agent {
-	private Random random = new Random();
-	private Brain brain = new Brain();
+	private Random random;
+	private Brain brain;
 
 	private int frames = 0;
 
 	private double nStepReward = 0;
 	private List<Sample> memory;
-	private RandomDistributedGenerator generator = new RandomDistributedGenerator();
 	
-	public Agent() {
+	public Agent(Brain brain) {
 		memory = new ArrayList<>();
+		random = new Random();
+		this.brain = brain;
 	}
 
 
@@ -27,17 +28,25 @@ public class Agent {
 		}
 	}
 	
-	public int act(double[] state){
-		double eps = this.getEpsilon();
-		frames += 1;
-		
-		if(random.nextDouble() < eps){
-			return random.nextInt(AIConstants.NUM_ACTIONS-1);
-		}else{
-			double[] probabilities = brain.predict_probabilities(state);
+	public int act(double[] state, boolean train){
+		if(train) {
+			double eps = this.getEpsilon();
+			frames += 1;
 
-			return RandomDistributedGenerator.getDistributedRandomNumber(probabilities);
+			if (random.nextDouble() < eps)
+				return random.nextInt(AIConstants.NUM_ACTIONS - 1);
+			else
+				return chooseDistributedAction(state);
 		}
+		else
+			return chooseDistributedAction(state);
+
+	}
+
+	private int chooseDistributedAction(double[] state) {
+		double[] probabilities = brain.predict_probabilities(state);
+
+		return RandomDistributedGenerator.getDistributedRandomNumber(probabilities);
 	}
 	
 	public void train(double[] state, int action, double reward, double[] nextState) {

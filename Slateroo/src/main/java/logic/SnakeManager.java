@@ -30,14 +30,11 @@ public class SnakeManager {
 	/**
 	 * Indicates whether the game is running
 	 */
-	private Arena arena;
-	
 	private boolean gameRunning = true;
 	
 	public SnakeManager(int snakeAmount, int playerAmount, Arena arena) {
-		this.arena = arena;
 		
-		initSnakes(snakeAmount, playerAmount);
+		initSnakes(snakeAmount, playerAmount, arena);
 	}
 	/**
 	 * Checks for every {@link Snake} in the game if it collides with another Snake. If so, then
@@ -107,7 +104,7 @@ public class SnakeManager {
 		}
 		return false;
 	}
-	private void checkSnakeBorderCollision() {
+	public void checkSnakeBorderCollision() {
 		snakes.forEach(snake -> {
 			if(!snake.isCollided())
 				snake.checkBorderCollision();
@@ -143,14 +140,14 @@ public class SnakeManager {
 	 * Initializes the amount of snakes wanted
 	 * @param keyb The user input for steering the snake with a keyboard
 	 */
-	private void initSnakes(int snakeAmount, int playerAmount) {
+	private void initSnakes(int snakeAmount, int playerAmount, Arena arena) {
 		snakes = new CopyOnWriteArrayList<>();
 		
 		for(int i = 0; i < snakeAmount; i++) {
 			if(i < playerAmount)
-				snakes.add(new Snake(false));
+				snakes.add(new Snake(false, arena, i));
 			else
-				snakes.add(new Snake(true));
+				snakes.add(new Snake(true, arena, i));
 		}
 	}
 	
@@ -169,6 +166,10 @@ public class SnakeManager {
 	
 	public List<Snake> getSnakes() {
 		return snakes;
+	}
+
+	public boolean isEverySnakeCollided() {
+		return !gameRunning || (snakes.size() == 1 && snakes.get(0).isCollided());
 	}
 
 	public boolean isGameRunning() {
