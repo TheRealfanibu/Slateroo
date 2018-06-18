@@ -142,8 +142,17 @@ public class SnakeManager {
 	 * Removes snakes from {@code snakes} which have collided and aren't visible anymore.
 	 *
 	 */
-	public void removeObsoleteSnakes() {
+	public void removeNonVisibleSnakes() {
 		snakes.removeIf(snake -> !snake.isVisible());
+		checkGameRunning();
+	}
+
+	public void removeCollidedSnakes() {
+		snakes.removeIf(Snake::isCollided);
+		checkGameRunning();
+	}
+
+	private void checkGameRunning() {
 		if(snakes.isEmpty())
 			gameRunning = false;
 	}
@@ -179,19 +188,11 @@ public class SnakeManager {
 		return snakes;
 	}
 
-	public boolean isEverySnakeCollided() {
-		return !gameRunning || (snakes.size() == 1 && snakes.get(0).isCollided());
-	}
-
 	public boolean isGameRunning() {
 		return gameRunning;
 	}
 
 	public void setTeleportMode(boolean mode) {
 		arena.setTeleportMode(mode);
-	}
-
-	public void removeEffectCounterEntry() {
-		EffectCounter.removeSnakeManagerCounter(this);
 	}
 }

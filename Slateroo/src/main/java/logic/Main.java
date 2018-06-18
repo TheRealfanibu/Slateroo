@@ -3,6 +3,7 @@ package logic;
 import java.util.ArrayList;
 import java.util.List;
 
+import ai.A3C.Agent;
 import ai.A3C.Brain;
 import ai.A3C.Optimizer;
 import ai.Environment;
@@ -17,6 +18,7 @@ import utilities.StopWatch;
  */
 public class Main {
 	private boolean trainAI = true;
+	private boolean loadAI = false;
 	
 	private List<Environment> environments = new ArrayList<>();
 	private List<Optimizer> optimizers = new ArrayList<>();
@@ -29,7 +31,14 @@ public class Main {
 	 */
 	public Main() {
 		brain = new Brain();
+
 		if(trainAI) {
+			if(loadAI) {
+				brain.load();
+				Agent.load();
+			}
+			Agent.setBrain(brain);
+			Optimizer.setBrain(brain);
 			createTrainingEnvironments();
 			createOptimizerThreads();
 		}
@@ -41,23 +50,24 @@ public class Main {
 	
 	private void createTrainingEnvironments() {
 		for(int i = 0; i < AIConstants.TRAIN_ENVS; i++) {
-			environments.add(new Environment(brain, true));
+			environments.add(new Environment(true));
 		}
 	}
 
 	private void createOptimizerThreads() {
 		for(int i = 0; i < AIConstants.OPTIMIZERS; i++) {
-			optimizers.add(new Optimizer(brain));
+			optimizers.add(new Optimizer());
 		}
 	}
 	
 	private void createUserEnvironment() {
-		environments.add(new Environment(brain, false));
+		environments.add(new Environment(false));
 	}
 	
 	private void addOnDestroy() {
 		Runnable shutdownHook = () -> {
 			brain.save();
+			Agent.save();
 		};
 		Runtime.getRuntime().addShutdownHook(new Thread(shutdownHook));
 	}

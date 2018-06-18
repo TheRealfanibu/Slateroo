@@ -42,7 +42,9 @@ public class Brain {
             }
         }
 
-		INDArray ndRewards = Nd4j.create(rewards).transpose();
+		INDArray ndRewards = Nd4j.create(rewards);
+		ndRewards = ndRewards.transpose();
+
 		INDArray ndTerminalMask = Nd4j.create(terminalMask).transpose();
 
 		if(states.length / AIConstants.MIN_BATCH > 5)

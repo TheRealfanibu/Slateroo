@@ -2,10 +2,9 @@ package ai.A3C;
 
 
 public class Optimizer extends Thread{
-	private Brain brain;
+	private static Brain brain;
 	
-	public Optimizer(Brain brain){
-		this.brain = brain;
+	public Optimizer(){
 		start();
 	}
 	
@@ -13,6 +12,10 @@ public class Optimizer extends Thread{
 		while(!isInterrupted()) {
 			brain.optimize();
 		}
+	}
+
+	public static void setBrain(Brain brain) {
+		Optimizer.brain = brain;
 	}
 	
 }

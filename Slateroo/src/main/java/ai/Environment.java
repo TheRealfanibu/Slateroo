@@ -1,8 +1,7 @@
 package ai;
 
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
 
 import ai.A3C.Agent;
@@ -20,7 +19,6 @@ import render.GamePanel;
 import utilities.Utils;
 import game.FPSCounter;
 
-import javax.rmi.CORBA.Util;
 import javax.swing.*;
 
 public class Environment extends Thread{
@@ -42,6 +40,9 @@ public class Environment extends Thread{
 	private static final int SNAKE_AMOUNT = 1;
 	private static final int PLAYER_AMOUNT = 0;
 
+	private static final int REWARD_PRINT_FREQUENCY = 30;
+	private static double totalRewardSum = 0;
+	private static int frequencyCounter = 0;
 
 	private Arena arena;
 	private SnakeManager snakeManager;
@@ -51,20 +52,24 @@ public class Environment extends Thread{
 	private GamePanel gamePanel;
 	private Frame frame;
 	
-	private Agent agent;
+	private Map<Snake,Agent> agents;
 
 	private EnvironmentInfo envInfo;
 	
 	private boolean trainAI;
 
-	public Environment(Brain brain, boolean trainAI) {
+	public Environment( boolean trainAI) {
 	    this.trainAI = trainAI;
-        agent = new Agent(brain);
-        //brain.load();
 		keyListener = new KeyboardSteering();
+		agents = new HashMap<>();
 		init();
 	    start();
     }
+
+    private void initAgents() {
+		agents.clear();
+		snakeManager.getSnakes().forEach(snake -> agents.put(snake, new Agent()));
+	}
 
     private void init() {
 		arena = new Arena();
@@ -78,6 +83,7 @@ public class Environment extends Thread{
 			frame.addKeyListener(keyListener);
 			frame.setVisible(true);
 		} else {
+			initAgents();
 			frame.addKeyListener(renderListener);
 		}
 	}
@@ -90,6 +96,7 @@ public class Environment extends Thread{
 		arena.reset();
 		snakeManager.reset();
 		itemManager.reset();
+		initAgents();
 	}
 	
 	public void run() {
@@ -103,48 +110,99 @@ public class Environment extends Thread{
 		while(!isInterrupted()) {
 			double totalReward = 0;
 
-			double[][] states = calcEnvironmentStates();
+			double[][] states = createStateStack();
 			while(true) {
-			   	if(renderListener.isRendering()) {
-			   		if(!frame.isVisible()) {
-			   			frame.setVisible(true);
-					}
-					gamePanel.repaint();
-					Utils.sleep(1);
-				} else {
-			   		if(frame.isVisible())
-			   			frame.setVisible(false);
-				}
-
+				render();
 
 				Direction[] actions = calcSnakeActions(states);
                 int[] actionIndices = Arrays.stream(actions).mapToInt(Direction::ordinal).toArray();
 				gameStep(actions);
 				double[][] nextStates = calcEnvironmentStates();
+				nextStates = insertStateIntoStack(states, nextStates);
 				double[] rewards = getRewardsFromSnakes();
-				
+
+				List<Snake> snakes = snakeManager.getSnakes();
 				for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 					double[] state = states[i];
-					if(state != null) {
-                        int actionIndex = actionIndices[i];
-                        double reward = rewards[i];
-                        totalReward += reward;
-                        double[] nextState = nextStates[i];
-                        agent.train(state, actionIndex, reward, nextState);
-                    }
+					int actionIndex = actionIndices[i];
+					double reward = rewards[i];
+					totalReward += reward;
+					double[] nextState = nextStates[i];
+					agents.get(snakes.get(i)).train(state, actionIndex, reward, nextState);
 				}
-				
-				if(snakeManager.isEverySnakeCollided())
+				snakeManager.removeCollidedSnakes();
+
+				if(!snakeManager.isGameRunning())
 					break;
-				
-				states = nextStates;
+
+				states = Arrays.stream(nextStates).filter(Objects::nonNull).toArray(double[][]::new);
 			}
 			reset();
 			System.gc();
-			System.out.println("Total Reward: " + totalReward);
+			totalRewardSum += totalReward;
+			if(++frequencyCounter == REWARD_PRINT_FREQUENCY) {
+				System.out.println("Average reward of " + frequencyCounter + ": " + totalRewardSum / frequencyCounter);
+				totalRewardSum = 0;
+				frequencyCounter = 0;
+			}
+
 		}
 	}
-	
+
+	private double[][] insertStateIntoStack(double[][] stateStack, double[][] state) {
+		int snakeAmount = snakeManager.getSnakeAmount();
+		int currentStateBeginIndex = AIConstants.NUM_STATES - AIConstants.NUM_STATES_PER_FRAME;
+		double[][] newStateStack = new double[snakeAmount][AIConstants.NUM_STATES];
+		for(int i = 0; i < snakeAmount; i++) {
+			if(state[i] != null) {
+				System.arraycopy(stateStack[i], AIConstants.NUM_STATES_PER_FRAME, newStateStack[i], 0, currentStateBeginIndex);
+				System.arraycopy(state[i], 0, newStateStack[i], currentStateBeginIndex, AIConstants.NUM_STATES_PER_FRAME);
+			}
+			else
+				newStateStack[i] = null;
+		}
+		return newStateStack;
+	}
+
+	private double[][] calcEnvironmentStates() {
+		double[][] states = new double[snakeManager.getSnakeAmount()][AIConstants.NUM_STATES];
+		List<Snake> snakes = snakeManager.getSnakes();
+		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
+			Snake snake = snakes.get(i);
+			if(snake.isSteeredByAI() && !snake.isCollided())
+				states[i] = envInfo.calcAIInputs(snake);
+			else
+				states[i] = null;
+		}
+		return states;
+	}
+
+	private double[][] createStateStack() {
+		double[][] state = calcEnvironmentStates();
+		double[][] stateStack = new double[snakeManager.getSnakeAmount()][AIConstants.NUM_STATES];
+		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
+			for(int j = 0; j < AIConstants.NUM_STATES; j++) {
+				int stateIndex = j % AIConstants.NUM_STATES_PER_FRAME;
+				stateStack[i][j] = state[i][stateIndex];
+			}
+		}
+		return stateStack;
+	}
+
+
+	private void render() {
+		if(renderListener.isRendering()) {
+			if(!frame.isVisible()) {
+				frame.setVisible(true);
+		 }
+		 gamePanel.repaint();
+		 Utils.sleep(1);
+	 } else {
+			if(frame.isVisible())
+				frame.setVisible(false);
+	 }
+	}
+
 	private double[] getRewardsFromSnakes() {
 		double[] rewards = new double[snakeManager.getSnakeAmount()];
 		List<Snake> snakes = snakeManager.getSnakes();
@@ -153,29 +211,17 @@ public class Environment extends Thread{
 		}
 		return rewards;
 	}
-	
-	private double[][] calcEnvironmentStates() {
-		double[][] states = new double[snakeManager.getSnakeAmount()][AIConstants.NUM_STATES];
-		List<Snake> snakes = snakeManager.getSnakes();
-		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
-			Snake snake = snakes.get(i);
-			if(snake.isSteeredByAI() && !snake.isCollided())
-			    states[i] = envInfo.calcAIInputs(snake);
-			else
-			    states[i] = null;
-		}
-		return states;
-	}
+
 	
 	private Direction[] calcSnakeActions(double[][] envStates) {
 		Direction[] actions = new Direction[snakeManager.getSnakeAmount()];
 		List<Snake> snakes = snakeManager.getSnakes();
 		for(int i = 0; i < snakeManager.getSnakeAmount(); i++) {
 			Snake snake = snakes.get(i);
-			if(snake.isCollided())
-				actions[i] = Direction.LEFT; // default value such that it can be processed by the stream, but not needed anyways
-			else if (snake.isSteeredByAI()) {
-				actions[i] = Direction.ofIndex(agent.act(envStates[i], trainAI));
+			//if(snake.isCollided())
+			//	actions[i] = Direction.LEFT; // default value such that it can be processed by the stream, but not needed anyways
+			if (snake.isSteeredByAI()) {
+				actions[i] = Direction.ofIndex(Agent.act(envStates[i], trainAI));
 			} else {
 				actions[i] = keyListener.getMoveDirection();
 			}
@@ -185,7 +231,8 @@ public class Environment extends Thread{
 	
 	private void gameStep(Direction[] snakeActions) {
 		snakeManager.takeActionForEachSnake(snakeActions);
-		snakeManager.removeObsoleteSnakes();
+		if(!trainAI)
+			snakeManager.removeNonVisibleSnakes();
 		snakeManager.checkSnakeBorderCollision();
 		snakeManager.checkSnakeCrashes();
 		itemManager.checkSnakeItemIntersections();
