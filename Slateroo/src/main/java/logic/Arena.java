@@ -68,7 +68,7 @@ public class Arena {
 	 * Gives the reference of itself to objects who need access to this class.
 	 */
 	public Arena() {
-		TeleportBorderItem.setArena(this);
+
 	}
 	
 	/**
@@ -102,6 +102,11 @@ public class Arena {
 	public void renderArena(Graphics g) {
 		g.setColor(ARENA_COLOR);
 		g.fillRect(BORDER_HITBOX, BORDER_HITBOX, WIDTH, HEIGHT);
+	}
+
+
+	public void reset() {
+		teleportMode = false;
 	}
 	
 	public void setTeleportMode(boolean mode) {

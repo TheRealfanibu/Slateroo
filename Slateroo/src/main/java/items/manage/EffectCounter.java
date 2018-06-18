@@ -1,6 +1,8 @@
 package items.manage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import logic.Snake;
@@ -10,7 +12,12 @@ public class EffectCounter {
 	private Map<Snake, Integer> snakeEffectCount = new HashMap<>();
 	
 	private Map<SnakeManager, Integer> effectCount = new HashMap<>(); // if the effect Count is not associated with a snake
-	
+
+	private static List<EffectCounter> allCounters = new ArrayList<>();
+
+	public EffectCounter() {
+		allCounters.add(this);
+	}
 	
 	public void increment(SnakeManager manager) {
 		effectCount.merge(manager, 1, Integer::sum);
@@ -28,5 +35,21 @@ public class EffectCounter {
 	public boolean decrement(Snake snake) {
 		int newCount = snakeEffectCount.computeIfPresent(snake, (Snake snk, Integer val) -> val - 1);
 		return newCount == 0;
+	}
+
+	public void removeSnakeEntry(Snake key) {
+		snakeEffectCount.remove(key);
+	}
+
+	public void removeSnakeManagerEntry(SnakeManager key) {
+		effectCount.remove(key);
+	}
+
+	public static void removeSnakeCounter(Snake snake) {
+		allCounters.forEach(counter -> counter.removeSnakeEntry(snake));
+	}
+
+	public static void removeSnakeManagerCounter(SnakeManager manager) {
+		allCounters.forEach(counter -> counter.removeSnakeManagerEntry(manager));
 	}
 }

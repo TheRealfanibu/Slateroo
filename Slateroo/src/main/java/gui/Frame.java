@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.Toolkit;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import render.GamePanel;
 
@@ -13,7 +13,7 @@ public class Frame extends JFrame{
 	public static final int SCREEN_HEIGHT = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 	
 	public static final int WIDTH = SCREEN_WIDTH;
-	public static final int HEIGHT = Frame.toScaledPixelSize(1000);
+	public static final int HEIGHT = SCREEN_HEIGHT;
 	
 	public static final int WIDTH_REDUCE = 6; // right frame border + left frame border are 6px thick 
 	public static final int HEIGHT_REDUCE = 29; // upper frame border + lower frame border are 29px thick
@@ -39,8 +39,7 @@ public class Frame extends JFrame{
 		setSize(WIDTH, HEIGHT);
 		setResizable(false);
 		setLocation(SCREEN_WIDTH - WIDTH, 0);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setVisible(true);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 	
 	public static int toScaledPixelSize(int size) {

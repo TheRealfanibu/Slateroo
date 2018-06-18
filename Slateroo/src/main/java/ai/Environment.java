@@ -1,5 +1,6 @@
 package ai;
 
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import ai.A3C.Agent;
 import ai.A3C.AIConstants;
 import ai.A3C.Brain;
+import ai.A3C.TrainRenderListener;
 import gui.Frame;
 import io.Direction;
 import io.KeyboardSteering;
@@ -18,13 +20,30 @@ import render.GamePanel;
 import utilities.Utils;
 import game.FPSCounter;
 
+import javax.rmi.CORBA.Util;
+import javax.swing.*;
+
 public class Environment extends Thread{
+	private static TrainRenderListener renderListener;
+
+	static {
+		renderListener = new TrainRenderListener();
+		JFrame loggerFrame = new JFrame();
+		loggerFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		loggerFrame.setSize(new Dimension(500,500));
+		loggerFrame.setLocationRelativeTo(null);
+		loggerFrame.addKeyListener(renderListener);
+		loggerFrame.setVisible(true);
+	}
+
 	public static final int FPS = 140;
 	private static final int SLEEP_TIME = (int) Math.round(1000d / FPS);
 	
-	private static final int SNAKE_AMOUNT = 4;
-	private static final int PLAYER_AMOUNT = 4;
-	
+	private static final int SNAKE_AMOUNT = 1;
+	private static final int PLAYER_AMOUNT = 0;
+
+
+	private Arena arena;
 	private SnakeManager snakeManager;
 	private ItemManager itemManager;
 	
@@ -33,6 +52,7 @@ public class Environment extends Thread{
 	private Frame frame;
 	
 	private Agent agent;
+
 	private EnvironmentInfo envInfo;
 	
 	private boolean trainAI;
@@ -40,25 +60,36 @@ public class Environment extends Thread{
 	public Environment(Brain brain, boolean trainAI) {
 	    this.trainAI = trainAI;
         agent = new Agent(brain);
+        //brain.load();
+		keyListener = new KeyboardSteering();
+		init();
 	    start();
     }
+
+    private void init() {
+		arena = new Arena();
+		snakeManager = new SnakeManager(SNAKE_AMOUNT, trainAI ? 0 : PLAYER_AMOUNT, arena);
+		itemManager = new ItemManager(snakeManager);
+		ObjectDetector objectDetector = new ObjectDetector(snakeManager, itemManager);
+		envInfo = new EnvironmentInfo(objectDetector);
+		gamePanel = new GamePanel(snakeManager, itemManager, arena);
+		frame = new Frame(gamePanel);
+		if(!trainAI) {
+			frame.addKeyListener(keyListener);
+			frame.setVisible(true);
+		} else {
+			frame.addKeyListener(renderListener);
+		}
+	}
 	
 	/**
 	 * Creates instances of the classes, which only have to exist once.
 	 * It also handles the access between each other
 	 */
 	private void reset() {
-		Arena arena = new Arena();
-		snakeManager = new SnakeManager(SNAKE_AMOUNT, trainAI ? 0 : PLAYER_AMOUNT, arena);
-		itemManager = new ItemManager(snakeManager);
-        ObjectDetector objectDetector = new ObjectDetector(snakeManager, itemManager);
-        envInfo = new EnvironmentInfo(objectDetector);
-        if(!trainAI) {
-            keyListener = new KeyboardSteering();
-            gamePanel = new GamePanel(snakeManager, itemManager, arena);
-            frame = new Frame(gamePanel);
-            frame.addKeyListener(keyListener);
-        }
+		arena.reset();
+		snakeManager.reset();
+		itemManager.reset();
 	}
 	
 	public void run() {
@@ -71,10 +102,20 @@ public class Environment extends Thread{
 	private void trainAI() {
 		while(!isInterrupted()) {
 			double totalReward = 0;
-			reset();
+
 			double[][] states = calcEnvironmentStates();
 			while(true) {
-			   // gamePanel.repaint();
+			   	if(renderListener.isRendering()) {
+			   		if(!frame.isVisible()) {
+			   			frame.setVisible(true);
+					}
+					gamePanel.repaint();
+					Utils.sleep(1);
+				} else {
+			   		if(frame.isVisible())
+			   			frame.setVisible(false);
+				}
+
 
 				Direction[] actions = calcSnakeActions(states);
                 int[] actionIndices = Arrays.stream(actions).mapToInt(Direction::ordinal).toArray();
@@ -98,8 +139,8 @@ public class Environment extends Thread{
 				
 				states = nextStates;
 			}
-			//frame.setVisible(false);
-			//frame.dispose();
+			reset();
+			System.gc();
 			System.out.println("Total Reward: " + totalReward);
 		}
 	}
@@ -155,6 +196,7 @@ public class Environment extends Thread{
 	 * This method contains a loop running all the time during the game and controlling the actions which happen in the game
 	 */
 	private void playUserGame() {
+
 	    reset();
 		FPSCounter fps = new FPSCounter("main", 5);
 		while(snakeManager.isGameRunning()) {

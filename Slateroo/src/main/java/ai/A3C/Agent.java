@@ -1,8 +1,6 @@
 package ai.A3C;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Agent {
 	private Random random;
@@ -14,7 +12,7 @@ public class Agent {
 	private List<Sample> memory;
 	
 	public Agent(Brain brain) {
-		memory = new ArrayList<>();
+		memory = new LinkedList<>();
 		random = new Random();
 		this.brain = brain;
 	}
@@ -31,10 +29,14 @@ public class Agent {
 	public int act(double[] state, boolean train){
 		if(train) {
 			double eps = this.getEpsilon();
-			frames += 1;
+			frames++;
+			if(frames % 20000 == 0)
+				System.out.println("Frames: " + frames);
+			if(frames % 100000 == 0)
+				brain.save();
 
 			if (random.nextDouble() < eps)
-				return random.nextInt(AIConstants.NUM_ACTIONS - 1);
+				return random.nextInt(AIConstants.NUM_ACTIONS);
 			else
 				return chooseDistributedAction(state);
 		}
@@ -61,9 +63,8 @@ public class Agent {
 				Sample trainSample = this.calcTrainingSample(nStep);
 				brain.trainPush(trainSample);
 
-				Sample sample_0 = this.memory.get(0);
+				Sample sample_0 = this.memory.remove(0);
 				this.nStepReward = (this.nStepReward - sample_0.getReward()) / AIConstants.GAMMA;
-				this.memory.remove(0);
 			}
 			this.nStepReward = 0;
 		}
@@ -71,7 +72,7 @@ public class Agent {
 		else if(memory.size() >= AIConstants.N_STEP_RETURN){
 			Sample trainSample = this.calcTrainingSample(AIConstants.N_STEP_RETURN);
 			brain.trainPush(trainSample);
-			Sample sample_0 = this.memory.get(0);
+			Sample sample_0 = this.memory.remove(0);
 			this.nStepReward = (this.nStepReward - sample_0.getReward()) / AIConstants.GAMMA;
 		}
 		

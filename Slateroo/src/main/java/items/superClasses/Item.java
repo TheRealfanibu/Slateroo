@@ -58,6 +58,8 @@ public abstract class Item implements GameObject{
 	protected final int drawY;
 
 	private boolean effectActivated = false;
+
+	protected boolean disabled = false;
 	
 	/**
 	 * Creates a new item object with the specified middle point coordinates and the specified loook
@@ -129,5 +131,8 @@ public abstract class Item implements GameObject{
 	public String toString() {
 		return getClass().getSimpleName() + " Item middle point: [" + middleX + ", " + middleY + "]";
 	}
-	
+
+    public void disable() {
+		disabled = true;
+    }
 }

@@ -27,11 +27,7 @@ public class ItemSpawner {
 	 * The y-range in which an item can spawn.
 	 */
 	private static final int SPAWN_ROOM_Y = Arena.HEIGHT - Item.LENGTH;
-	
-	/**
-	 * Indicates whether the spawners should spawn items. At the end of the game this will be set to false
-	 */
-	private static boolean spawning = true;
+
 	/**
 	 * The average time it takes to spawn an item object.
 	 */
@@ -54,21 +50,25 @@ public class ItemSpawner {
 	/**
 	 * To automize the spawning
 	 */
-	private final Timer timer;
+	private Timer timer;
 	/**
 	 * The constructor of the item class which this spawner should spawn for reflective instanciation
 	 */
+
+	private Class<?> itemClass;
 	private Constructor<?> itemConstructor;
+
+	private boolean reseted = false;
 	
 	/**
 	 * Creates an item spawner for the specified {@link Item} class
 	 * @param itemClass The class of the item that should be spawned
 	 */
 	public ItemSpawner(ItemManager itemManager, SnakeManager snakeManager, Class<?> itemClass) {
-		
 		if(!Item.class.isAssignableFrom(itemClass))
 			throw new RuntimeException("Itemspawner: " + itemClass.getSimpleName() + " is not a subclass of Item");
-		
+		this.itemClass = itemClass;
+
 		this.itemManager = itemManager;
 		this.snakeManager = snakeManager;
 		initItemAttributes(itemClass);
@@ -104,15 +104,16 @@ public class ItemSpawner {
 	 * Starts a thread, which spawns an item after a generated time
 	 */
 	private void startTimerForNextSpawn() {
-		if(spawning) {
-			long spawnTimeMillis = (long) (generateSpawnTime() * 1000);
-			TimerTask task = new TimerTask() {
+		long spawnTimeMillis = (long) (generateSpawnTime() * 1000);
+		TimerTask task = new TimerTask() {
 				public void run() {
-					spawnItem();
+					if(reseted)
+						spawnItem();
+					else
+						reseted = false;
 				}
 			};
-			timer.schedule(task, spawnTimeMillis);
-		}
+		timer.schedule(task, spawnTimeMillis);
 	}
 	/**
 	 * Generates random properties such as position and also effect mode if it is an {@link MultiplePlayerEffectItem}
@@ -183,8 +184,11 @@ public class ItemSpawner {
 		return new Point(x + Item.LENGTH_HALF, y + Item.LENGTH_HALF); //translate to the middle point
 	}
 	
-	public static void setSpawning(boolean spawn) {
-		spawning = spawn;
+	public void reset() {
+		timer.cancel();
+		reseted = true;
+		timer = new Timer(itemClass.getSimpleName() + "-ItemSpawner");
+		startTimerForNextSpawn();
 	}
 	
 }

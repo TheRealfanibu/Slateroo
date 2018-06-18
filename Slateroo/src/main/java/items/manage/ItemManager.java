@@ -71,4 +71,11 @@ public class ItemManager {
 	public List<Item> getItems() {
 		return items;
 	}
+
+
+    public void reset() {
+		items.forEach(Item::disable);
+		items.clear();
+		itemSpawners.forEach(ItemSpawner::reset);
+    }
 }

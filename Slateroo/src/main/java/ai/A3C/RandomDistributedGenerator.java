@@ -1,5 +1,6 @@
 package ai.A3C;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -15,7 +16,7 @@ public class RandomDistributedGenerator {
     		if(random <= probabilitySum)
     			return i;
     	}
-    	throw new RuntimeException("Something went wrong, please debug getDistributedRandomNumber()");
+    	throw new RuntimeException("Something went wrong, please debug getDistributedRandomNumber() " + Arrays.toString(probabilities));
     }
     
     /*

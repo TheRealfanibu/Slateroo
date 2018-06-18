@@ -49,8 +49,10 @@ public abstract class TimeEffectItem extends Item implements ITimeEffectItem{
 		snakeManager.getSnakes().forEach(snk -> snk.addTimeEffect(effect));
 		TimerTask resetTask = new TimerTask() {
 			public void run() {
-				resetEffect(snake);
-				snakeManager.getSnakes().forEach(snk -> snk.removeTimeEffect(effect));
+				if(!disabled) {
+					resetEffect(snake);
+					snakeManager.getSnakes().forEach(snk -> snk.removeTimeEffect(effect));
+				}
 			}
 		};
 		new Timer().schedule(resetTask, effectTime);

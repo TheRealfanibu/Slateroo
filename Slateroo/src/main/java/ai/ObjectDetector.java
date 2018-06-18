@@ -24,7 +24,7 @@ import logic.SnakeTile;
 import mathUtils.MathUtils;
 
 public class ObjectDetector {
-	public static final int DIRECTION_AMOUNT = 16;
+	public static final int DIRECTION_AMOUNT = 12;
 	private static final double ANGLE_STEP = 360d / DIRECTION_AMOUNT;
 	
 	private SnakeManager snakeManager;
@@ -37,6 +37,7 @@ public class ObjectDetector {
 	
 	public List<Double> calcEnvironmentInputs(Snake snake) {
 		List<List<Double>> directionInputs = new LinkedList<>();
+		List<Double> borderInputs = new LinkedList<>();
 		
 		HeadTile head = snake.getHead();
 		double headX = head.getX();
@@ -47,13 +48,16 @@ public class ObjectDetector {
 		for(int i = 0; i < DIRECTION_AMOUNT; i++) {
 			double directionAngle = moveAngle + ANGLE_STEP * i;
 			Point borderIntersection = calcBorderIntersectionPoints(headX, headY, directionAngle);
-			List<GameObject> gameObjectsInDirection = getObjectsInDirection(headX, headY, borderIntersection, gameObjects);
-			Map<Class<?>, NetworkData> nearestDistanceOfClass = calcDistanceOfNearestObjectForEachClass(headX, headY,
-					gameObjectsInDirection, borderIntersection);
-			directionInputs.add(convertToNetworkInputs(nearestDistanceOfClass));
+            double borderDistance = MathUtils.calcDistance(headX, headY, borderIntersection.getX(), borderIntersection.getY());
+            borderInputs.add((Arena.MAX_DISTANCE - borderDistance) / Arena.MAX_DISTANCE);
+			//List<GameObject> gameObjectsInDirection = getObjectsInDirection(headX, headY, borderIntersection, gameObjects);
+			//Map<Class<?>, NetworkData> nearestDistanceOfClass = calcDistanceOfNearestObjectForEachClass(headX, headY,
+			//		gameObjectsInDirection, borderIntersection);
+			//directionInputs.add(convertToNetworkInputs(nearestDistanceOfClass));
 		}
-		List<Double> networkInputs = directionInputs.stream().flatMap(List::stream).collect(Collectors.toList());
-		return networkInputs;
+		//List<Double> networkInputs = directionInputs.stream().flatMap(List::stream).collect(Collectors.toList());
+		//return networkInputs;
+        return borderInputs;
 	}
 	
 	private List<Double> convertToNetworkInputs(Map<Class<?>, NetworkData> nearestDistanceOfClass) {

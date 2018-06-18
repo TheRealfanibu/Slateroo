@@ -47,10 +47,12 @@ public abstract class MultiplePlayerTimeEffectItem extends MultiplePlayerEffectI
 		executeOnSnakeDependingOnMode(snake, snk -> snk.addTimeEffect(effect));
 		TimerTask resetTask = new TimerTask() {
 			public void run() {
-				executeOnSnakeDependingOnMode(snake, snk ->  {
-					resetEffect(snk);
-					snk.removeTimeEffect(effect);
-				});
+				if(!disabled) {
+					executeOnSnakeDependingOnMode(snake, snk ->  {
+						resetEffect(snk);
+						snk.removeTimeEffect(effect);
+					});
+				}
 			}
 		};
 		new Timer().schedule(resetTask, effectTime);

@@ -6,13 +6,14 @@ import logic.Arena;
 import logic.Snake;
 import logic.SnakeManager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TeleportBorderItem extends TimeEffectItem{
-	public static final double AVG_SPAWN_TIME = 10;
-	public static final double MAX_SPAWN_DIFF = 5;
+	public static final double AVG_SPAWN_TIME = 50;
+	public static final double MAX_SPAWN_DIFF = 15;
 	
 	private static final double EFFECT_TIME = 15;
-	
-	private static Arena arena;
 	
 	private static EffectCounter effectCounter = new EffectCounter();
 
@@ -22,18 +23,14 @@ public class TeleportBorderItem extends TimeEffectItem{
 
 	@Override
 	protected void effect(Snake snake) {
-		arena.setTeleportMode(true);
+		snakeManager.setTeleportMode(true);
 		effectCounter.increment(snakeManager);
 	}
 
 	@Override
 	protected void resetEffect(Snake snake) {
 		if(effectCounter.decrement(snakeManager))
-			arena.setTeleportMode(false);
-	}
-	
-	public static void setArena(Arena arena) {
-		TeleportBorderItem.arena = arena;
+			snakeManager.setTeleportMode(false);
 	}
 
 }

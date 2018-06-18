@@ -5,6 +5,7 @@ import gui.Frame;
 import io.Direction;
 import io.Steering;
 import items.*;
+import items.manage.EffectCounter;
 import items.manage.TimeEffect;
 import items.superClasses.Item;
 import utilities.Utils;
@@ -51,6 +52,8 @@ public class Snake {
 	 * The amount of how many {@link Snake} objects have been instanciated
 	 */
 	private static final double COLLIDE_REWARD = -1;
+
+	private static final double SURVIVE_REWARD = 0.001;
 
 	/**
 	 * Reference to the {@link Arena} instance
@@ -122,6 +125,7 @@ public class Snake {
 		this.steeredByAI = steeredByAI;
 		this.arena = arena;
 		this.position = position;
+		this.reward = SURVIVE_REWARD;
 
 		tilesLock = new ReentrantReadWriteLock(true);
 		if(steeredByAI)
@@ -129,7 +133,7 @@ public class Snake {
 		
 		chooseColor();
 		initTiles();
-		initStarvation();
+		//initStarvation();
 
 	}
 	
@@ -486,13 +490,14 @@ public class Snake {
 	
 	public double getAndResetReward() {
 		double rewardSave = this.reward;
-		this.reward = 0;
+		this.reward = SURVIVE_REWARD;
 		return rewardSave;
 	}
 	
 	public void collide() {
 		this.collided = true;
 		addReward(COLLIDE_REWARD);
+		EffectCounter.removeSnakeCounter(this);
 	}
 	
 	public void addReward(double reward) {

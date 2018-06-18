@@ -1,6 +1,7 @@
 package game;
 
 import mathUtils.MathUtils;
+import mathUtils.Vector;
 
 public abstract class IntersectionUtils {
 	

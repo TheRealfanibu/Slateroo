@@ -45,7 +45,8 @@ public class Brain {
 		INDArray ndRewards = Nd4j.create(rewards).transpose();
 		INDArray ndTerminalMask = Nd4j.create(terminalMask).transpose();
 
-		System.out.println("Optimize " + states.length + " Samples = " + (states.length / AIConstants.MIN_BATCH) + " times the minibatch");
+		if(states.length / AIConstants.MIN_BATCH > 5)
+		    System.out.println("Optimize Batch " + states.length + " = " + states.length / (double) AIConstants.MIN_BATCH + " times the minibatch");
 
 		INDArray ndValues = predict_values(nextStates);
 		INDArray rewardPrediction = ndValues.mul(AIConstants.GAMMA_N).mul(ndTerminalMask);
@@ -54,7 +55,7 @@ public class Brain {
 		network.fit(states, onehotActions, expectedReward);
 	}
 	
-	public void trainPush(Sample sample){
+	public synchronized void trainPush(Sample sample){
 		trainQueue.add(sample);
 	}
 	
@@ -70,5 +71,9 @@ public class Brain {
 
     public void save() {
 	    network.save();
+    }
+
+    public void load() {
+	    network.load();
     }
 }

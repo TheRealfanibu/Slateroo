@@ -21,8 +21,8 @@ public class EnvironmentInfo {
 	public double[] calcAIInputs(Snake snake) {
 		List<Double> environmentInputs = objectDetector.calcEnvironmentInputs(snake);
 		double starvationInput = calcStarvationInput(snake);
-		environmentInputs.add(starvationInput);
-		environmentInputs.addAll(calcInputForTimeEffectItems(snake));
+		//environmentInputs.add(starvationInput);
+		//environmentInputs.addAll(calcInputForTimeEffectItems(snake));
 		return environmentInputs.stream().mapToDouble(Double::doubleValue).toArray();
 	}
 	

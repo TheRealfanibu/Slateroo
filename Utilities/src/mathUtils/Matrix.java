@@ -1,10 +1,8 @@
-package ai.myNeuralNetworkStuff;
+package mathUtils;
 
 import java.util.Arrays;
 import java.util.Random;
 import java.util.function.UnaryOperator;
-
-import game.IllegalDimensionsException;
 
 public class Matrix {
 	private double[][] matrix;

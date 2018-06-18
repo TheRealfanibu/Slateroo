@@ -1,6 +1,7 @@
 package ai.myNeuralNetworkStuff;
 
-import game.Matrix;
+
+import mathUtils.Matrix;
 
 public class MyNeuralNetwork {
 	private Matrix[] weights;
@@ -51,8 +52,8 @@ public class MyNeuralNetwork {
 		Matrix outputFromLastLayer = inputVector;
 		for(int i = 0; i < amountWeightLayers; i++) {
 			Matrix weightedInputsToNextLayer = Matrix.multiply(weights[i], outputFromLastLayer);
-			Matrix weightedInputsPlusBiases = Matrix.add(weightedInputsToNextLayer, biases[i]);
-            Matrix output = activationFunction(activationFunctions[i], weightedInputsPlusBiases, false);
+			Matrix weightedInputsPlusBiases = Matrix.add(weightedInputsToNextLayer, biases[i]);;
+			Matrix output = activationFunction(activationFunctions[i], weightedInputsPlusBiases, false);
 			outputs[i+1] = output;
 			outputFromLastLayer = output;
 		}
@@ -75,7 +76,7 @@ public class MyNeuralNetwork {
 		for(int i = 0; i < amountWeightLayers; i++) {
 			Matrix gradients = activationFunction(activationFunctions[i], outputs[i+1], true);
 			Matrix gradientsProportionalToError = Matrix.multiplyElementwise(gradients, errors[amountWeightLayers - 1 - i]);
-			Matrix gradientsProportionalToErrorAndLearningRate = gradientsProportionalToError.scale(learningRate);
+			Matrix gradientsProportionalToErrorAndLearningRate = gradientsProportionalToError.multiplyWithNumber(learningRate);
 			Matrix transposedOutputsFromPreviousLayer = outputs[i].transpose();
 			Matrix weightAdjustments = Matrix.multiply(gradientsProportionalToErrorAndLearningRate, transposedOutputsFromPreviousLayer);
 			weights[i] = Matrix.add(weights[i], weightAdjustments);

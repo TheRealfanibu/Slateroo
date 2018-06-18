@@ -1,4 +1,4 @@
-package game;
+package mathUtils;
 
 import java.util.Arrays;
 
